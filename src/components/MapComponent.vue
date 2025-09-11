@@ -151,22 +151,32 @@ const updateRegions = () => {
     style: getFeatureStyle,
     onEachFeature: (feature, layer) => {
       if (feature.properties?.id) {
-        layer.bindPopup(createPopupContent(feature.properties.id))
-      }
+        const popup = L.popup({
+          closeButton: false,        // Remove  X
+          autoClose: false,
+          closeOnEscapeKey: false,
+          autoPan: false
+        }).setContent(createPopupContent(feature.properties.id))
 
-      layer.on({
-        mouseover: (e) => {
-          const target = e.target
-          target.setStyle({
-            weight: 2.5,
-            fillOpacity: 0.95,
-            color: '#ffffff'
-          })
-        },
-        mouseout: (e) => {
-          geoJsonLayer?.resetStyle(e.target)
-        }
-      })
+        layer.on({
+          click: (e) => {
+            popup.setLatLng(e.latlng).openOn(map!)
+          },
+          mouseover: (e) => {
+            const target = e.target
+            target.setStyle({
+              weight: 2.5,
+              fillOpacity: 0.95,
+              color: '#ffffff'
+            })
+          },
+          mouseout: (e) => {
+            geoJsonLayer?.resetStyle(e.target)
+
+            map!.closePopup(popup)
+          }
+        })
+      }
     }
   })
 
