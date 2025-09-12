@@ -15,12 +15,24 @@ import type { MapRegion, LevelConfig } from '../types/map'
 import 'leaflet/dist/leaflet.css'
 
 
+interface ZoneLevel {
+  id: string
+  name: string
+  level: number
+}
+
 interface Props {
-  zoneLevels: Record<string, number>
+  zoneLevels: ZoneLevel[]
   levelConfig?: LevelConfig
   center?: [number, number]
   zoom?: number
 }
+
+interface Emits {
+  regionClick: [regionId: string]
+}
+
+const emit = defineEmits<Emits>()
 
 const props = withDefaults(defineProps<Props>(), {
   center: () => [-23.200, -45.864],
@@ -41,12 +53,16 @@ const loadRegionsData = async () => {
     const response = await fetch('/data/regions.geojson')
     const geojsonData = await response.json()
 
-    regions.value = geojsonData.features.map((feature: GeoJSON.Feature, index: number) => ({
-      id: `zone-${index + 1}`,
-      name: feature.properties?.Name || `Zone ${index + 1}`,
-      level: props.zoneLevels[feature.properties?.Name] || 1,
-      geojson: feature
-    }))
+    regions.value = geojsonData.features.map((feature: GeoJSON.Feature, index: number) => {
+      const zoneLevelData = props.zoneLevels.find(zone => zone.name === feature.properties?.Name)
+
+      return {
+        id: zoneLevelData?.id || `zone-${index + 1}`,
+        name: feature.properties?.Name || `Zone ${index + 1}`,
+        level: zoneLevelData?.level || 1,
+        geojson: feature
+      }
+    })
   } catch (err) {
     console.error('Error loading regions:', err)
   } finally {
@@ -161,6 +177,11 @@ const updateRegions = () => {
         layer.on({
           click: (e) => {
             popup.setLatLng(e.latlng).openOn(map!)
+
+            const region = regions.value.find(r => r.id === feature.properties?.id)
+            if (region) {
+              emit('regionClick', region.id)
+            }
           },
           mouseover: (e) => {
             const target = e.target

@@ -18,8 +18,14 @@ export interface MapData {
   levelConfig: LevelConfig
 }
 
+export interface ZoneLevel {
+  id: string
+  name: string
+  level: number
+}
+
 export interface MapProps {
-  zoneLevels: Record<string, number>
+  zoneLevels: ZoneLevel[]
   levelConfig?: LevelConfig
   center?: [number, number]
   zoom?: number

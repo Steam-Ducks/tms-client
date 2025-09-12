@@ -5,7 +5,10 @@
     </div>
 
     <div class="map-card">
-      <MapComponent :zone-levels="zoneLevels" />
+      <MapComponent
+        :zone-levels="zoneLevels"
+        @region-click="handleRegionClick"
+      />
     </div>
   </div>
 </template>
@@ -14,13 +17,18 @@
 import MapComponent from '../components/MapComponent.vue'
 
 // exemplo de como receber do backend os niveis de cada zona
-const zoneLevels = {
-  'Zona SUL': 2,
-  'Zona SUDESTE': 3,
-  'Zona LESTE': 1,
-  'CENTRO': 5,
-  'Zona OESTE': 4,
-  'Zona NORTE': 1
+const zoneLevels = [
+  { id: '1', name: 'Zona SUL', level: 2 },
+  { id: '2', name: 'Zona SUDESTE', level: 3 },
+  { id: '3', name: 'Zona LESTE', level: 1 },
+  { id: '4', name: 'CENTRO', level: 5 },
+  { id: '5', name: 'Zona OESTE', level: 4 },
+  { id: '6', name: 'Zona NORTE', level: 1 }
+]
+
+
+const handleRegionClick = (regionId: string) => {
+  console.log('Clicked :', regionId)
 }
 </script>
 
@@ -50,7 +58,7 @@ const zoneLevels = {
 
 .map-card {
   width: 100%;
-  max-width: 600px;
+  max-width: 1200px;
   height: 500px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
