@@ -23,7 +23,7 @@ const zoneLevels = [
   { id: '3', name: 'Zona LESTE', level: 1 },
   { id: '4', name: 'CENTRO', level: 5 },
   { id: '5', name: 'Zona OESTE', level: 4 },
-  { id: '6', name: 'Zona NORTE', level: 1 }
+  { id: '6', name: 'Zona NORTE', level: 5 }
 ]
 
 
@@ -58,7 +58,7 @@ const handleRegionClick = (regionId: string) => {
 
 .map-card {
   width: 100%;
-  max-width: 1200px;
+  max-width: 700px;
   height: 500px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);

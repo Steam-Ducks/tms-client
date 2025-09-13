@@ -40,7 +40,7 @@ const props = withDefaults(defineProps<Props>(), {
   levelConfig: () => ({
     min: 1,
     max: 5,
-    colors: ['#00BF63', '#FCB100', '#F97316', '#EA580C', '#D91532']
+    colors: ['#00BF63', '#FCB100', '#F97316', '#D91532', '#81358B']
   })
 })
 
@@ -137,7 +137,7 @@ const initMap = async () => {
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: 'lucas mapas',
     subdomains: 'abcd',
-    maxZoom: 20
+    opacity: 0.9
   }).addTo(map)
 
   updateRegions()
