@@ -21,7 +21,7 @@ const zoneLevels = [
   { id: '1', name: 'Zona SUL', level: 2 },
   { id: '2', name: 'Zona SUDESTE', level: 3 },
   { id: '3', name: 'Zona LESTE', level: 1 },
-  { id: '4', name: 'CENTRO', level: 5 },
+  { id: '4', name: 'Zona CENTRAL', level: 5 },
   { id: '5', name: 'Zona OESTE', level: 4 },
   { id: '6', name: 'Zona NORTE', level: 5 }
 ]
