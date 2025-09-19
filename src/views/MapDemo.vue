@@ -1,22 +1,22 @@
 <template>
   <div class="demo-page">
-    <div class="demo-header">
-      <h1>exemplo de uso componente mapa</h1>
-    </div>
-
+    <HeaderComponent class="header-overlay" />
     <div class="map-card">
       <MapComponent
         :zone-levels="zoneLevels"
         @region-click="handleRegionClick"
       />
+      <CaptionComponent />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import MapComponent from '../components/MapComponent.vue'
+import HeaderComponent from '../components/HeaderComponent.vue'
+import CaptionComponent from '../components/CaptionComponent.vue'
 
-// exemplo de como receber do backend os niveis de cada zona
+
 const zoneLevels = [
   { id: '1', name: 'Zona SUL', level: 2 },
   { id: '2', name: 'Zona SUDESTE', level: 3 },
@@ -26,7 +26,6 @@ const zoneLevels = [
   { id: '6', name: 'Zona NORTE', level: 5 }
 ]
 
-
 const handleRegionClick = (regionId: string) => {
   console.log('Clicked :', regionId)
 }
@@ -34,36 +33,25 @@ const handleRegionClick = (regionId: string) => {
 
 <style scoped>
 .demo-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0c0c0c 0%, #242424 100%);
-  color: white;
-  padding: 40px 20px;
-  display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
-
-.demo-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.demo-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-}
-
-
 
 .map-card {
   width: 100%;
-  max-width: 700px;
-  height: 500px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 32px;
-  padding: 8px;
+  height: 700px;
+  position: relative;
 }
 
+.header-overlay {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 100%; 
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+}
 </style>
