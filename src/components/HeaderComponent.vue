@@ -36,14 +36,20 @@ const goToLogin = () => {
   max-width: 1200px;
   height: 60px;
 
-  /* aumenta afastamento lateral */
+
   padding: 0 32px;
   border-radius: 32px;
   background: rgba(30, 30, 30, 0.4);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+   background: rgba(255, 255, 255, 0.1); /* transparência */
   z-index: 1;
   overflow: hidden;
+
+ background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    transparent 100%
+  );
 }
 
 .header::before {
