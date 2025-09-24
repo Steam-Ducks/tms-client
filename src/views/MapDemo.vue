@@ -1,19 +1,17 @@
 <template>
   <div class="demo-page">
-    <HeaderComponent class="header-overlay" />
     <div class="map-card">
       <MapComponent
         :zone-levels="zoneLevels"
         @region-click="handleRegionClick"
       />
       <CaptionComponent />
-    </div>
+  </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import MapComponent from '../components/MapComponent.vue'
-import HeaderComponent from '../components/HeaderComponent.vue'
 import CaptionComponent from '../components/CaptionComponent.vue'
 
 
@@ -43,15 +41,5 @@ const handleRegionClick = (regionId: string) => {
   position: relative;
 }
 
-.header-overlay {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  width: 100%; 
-  display: flex;
-  justify-content: center;
-  padding: 0 20px;
-}
+
 </style>
