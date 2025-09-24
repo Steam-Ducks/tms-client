@@ -58,18 +58,18 @@ export default defineComponent({
 
 
 .verde {
-  background-color: #00A651;
+  background-color: #00BF63;
 }
 .amarelo {
-  background-color: #FFC000;
+  background-color: #FCB100;
 }
 .laranja {
-  background-color: #FF7B00;
+  background-color: #F97316;
 }
 .vermelho {
   background-color: #D91532;
 }
 .pessimo {
-  background-color: #a005ff;
+  background-color: #9529FF;
 }
 </style>
