@@ -12,7 +12,7 @@ const status = computed(() => statusMap[props.level])
 
 
 <template>
-  <div class="card" :style="{ background: `linear-gradient(120deg, ${status.color}, rgba(252, 176, 0, 0.05))` }">
+  <div class="card" :style="{ background: `linear-gradient(100deg, ${status.color}, rgba(252, 176, 0, 0.05))` }">
     <div class="body">
         {{ props.level }}
     </div>
