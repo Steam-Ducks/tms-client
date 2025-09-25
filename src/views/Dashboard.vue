@@ -1,8 +1,10 @@
 // eslint-disable-next-line vue/multi-word-component-names
 <script setup lang="ts">
-  import MapDemo from '../views/MapDemo.vue'
-  import { useLevelStatus, type Level } from "../services/LevelStatus"
-  import Card from '../components/CardComponent.vue'
+import MapComponent from '../components/MapComponent.vue'
+import CaptionComponent from '../components/CaptionComponent.vue'
+import { useLevelStatus, type Level } from "../services/LevelStatus"
+import Card from '../components/CardComponent.vue'
+
 
   const { status, setLevel } = useLevelStatus()
   const zoneLevels = [
@@ -14,13 +16,25 @@
     { id: '6', name: 'Zona Norte', level: 5 }
   ]
 
-  const level=3
-  setLevel(level)
+const level=3
+setLevel(level)
+
+const handleRegionClick = (regionId: string) => {
+console.log('Clicked :', regionId)
+}
 
 </script>
 
 <template>
-  <MapDemo />
+  <div class="demo-page">
+    <div class="map-card">
+      <MapComponent
+        :zone-levels="zoneLevels"
+        @region-click="handleRegionClick"
+      />
+      <CaptionComponent />
+  </div>
+  </div>
   <div class="scrollable-content">
     <div class="status-geral-cidade">
       <h1> O trânsito em São José dos Campos está <b :style="{ color: status.color }">{{ status.text }}</b> neste momento. </h1>
@@ -38,9 +52,20 @@
 
 <style>
 
-  @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&display=swap');
 
-  * {
+.demo-page {
+flex-direction: column;
+align-items: center;
+}
+
+.map-card {
+  width: 100%;
+  height: 700px;
+  position: relative;
+}
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
