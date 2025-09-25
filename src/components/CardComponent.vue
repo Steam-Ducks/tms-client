@@ -1,23 +1,27 @@
+<script setup lang="ts">
+import { statusMap, type Level } from "../services/LevelStatus"
+import { computed } from "vue"
+
+const props = defineProps<{
+  level: Level
+  region: string
+}>()
+
+const status = computed(() => statusMap[props.level])
+</script>
+
+
 <template>
-  <div class="card" :style="{background: `linear-gradient(120deg, ${props.bgColor}70, rgba(252, 176, 0, 0.0005))`}">
+  <div class="card" :style="{ background: `linear-gradient(120deg, ${status.color}, rgba(252, 176, 0, 0.05))` }">
     <div class="body">
-        {{ level }}
+        {{ props.level }}
     </div>
     <div class="footer">
-      {{ region }}
+      {{ props.region }}
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import type { Level } from '@/services/LevelStatus';
-// props → valores oferecidos pelo dashboard
-const props = defineProps<{
-  level: Level
-  region: string
-  bgColor: string
-}>()
-</script>
 
 <style>
   .card {

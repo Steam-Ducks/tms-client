@@ -1,13 +1,21 @@
 // eslint-disable-next-line vue/multi-word-component-names
 <script setup lang="ts">
   import MapDemo from '../views/MapDemo.vue'
-  import { useLevelStatus } from "../services/LevelStatus"
+  import { useLevelStatus, type Level } from "../services/LevelStatus"
   import Card from '../components/CardComponent.vue'
-const { status, setLevel } = useLevelStatus()
-const region="centro"
-const level=1
 
-setLevel(level)
+  const { status, setLevel } = useLevelStatus()
+  const zoneLevels = [
+    { id: '1', name: 'Zona SUL', level: 2 },
+    { id: '2', name: 'Zona SUDESTE', level: 3 },
+    { id: '3', name: 'Zona LESTE', level: 1 },
+    { id: '4', name: 'Zona CENTRAL', level: 5 },
+    { id: '5', name: 'Zona OESTE', level: 4 },
+    { id: '6', name: 'Zona NORTE', level: 5 }
+  ]
+
+  const level=3
+  setLevel(level)
 
 </script>
 
@@ -17,7 +25,12 @@ setLevel(level)
     <div class="status-geral-cidade">
       <h1> O trânsito em São José dos Campos está <b :style="{ color: status.color }">{{ status.text }}</b> neste momento. </h1>
     </div>
-    <Card :level="level" :region="region" :bgColor="status.color"/>
+    <Card
+        v-for="zone in zoneLevels"
+        :key="zone.id"
+        :level="zone.level as Level"
+        :region="zone.name"
+    />
   </div>
 </template>
 
