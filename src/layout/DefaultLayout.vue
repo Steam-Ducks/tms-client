@@ -8,6 +8,7 @@ import HeaderComponent from '../components/HeaderComponent.vue'
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&display=swap');
 .header-overlay {
   position: absolute;
   top: 10px;

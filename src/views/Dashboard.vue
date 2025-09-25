@@ -2,10 +2,12 @@
 <script setup lang="ts">
   import MapDemo from '../views/MapDemo.vue'
   import { useLevelStatus } from "../services/LevelStatus"
-
+  import Card from '../components/CardComponent.vue'
 const { status, setLevel } = useLevelStatus()
+const region="centro"
+const level=1
 
-setLevel(5)
+setLevel(level)
 
 </script>
 
@@ -15,6 +17,7 @@ setLevel(5)
     <div class="status-geral-cidade">
       <h1> O trânsito em São José dos Campos está <b :style="{ color: status.color }">{{ status.text }}</b> neste momento. </h1>
     </div>
+    <Card :level="level" :region="region" :bgColor="status.color"/>
   </div>
 </template>
 
@@ -38,13 +41,15 @@ setLevel(5)
     color: #e0e0e0;
     padding: 50px 20px;
     min-height: 100vh;
-    display: flex;
     justify-content: center;
+    text-align: center;
   }
 
   .status-geral-cidade {
     color:#e0e0e0;
-    width: 40%;
+    width: 100%;
+    padding-left: 30%;
+    padding-right: 30%;
     text-align: center;
     font-size: 90%;
 
