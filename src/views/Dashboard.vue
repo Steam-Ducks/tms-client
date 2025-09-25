@@ -3,21 +3,27 @@
   import MapDemo from '../views/MapDemo.vue'
   import { useLevelStatus, type Level } from "../services/LevelStatus"
   import Card from '../components/CardComponent.vue'
+  import TrafficService from "@/services/trafficService";
+  import type { ZoneLevel } from "@/services/trafficService";
+  import { ref, onMounted } from "vue"
+
+  const zones = ref<ZoneLevel[]>([]) 
 
   const { status, setLevel } = useLevelStatus()
-  const zoneLevels = [
-    { id: '1', name: 'Zona SUL', level: 2 },
-    { id: '2', name: 'Zona SUDESTE', level: 3 },
-    { id: '3', name: 'Zona LESTE', level: 1 },
-    { id: '4', name: 'Zona CENTRAL', level: 5 },
-    { id: '5', name: 'Zona OESTE', level: 4 },
-    { id: '6', name: 'Zona NORTE', level: 5 }
-  ]
-
-  const level=3
+  const level = 3
   setLevel(level)
 
+  onMounted(async () => {
+    try {
+      const data: ZoneLevel[] = await TrafficService.getZoneLevels()
+      console.log("Dados recebidos do backend:", data)
+      zones.value = data
+    } catch (err) {
+      console.error("Erro ao carregar zonas:", err)
+    }
+  })
 </script>
+
 
 <template>
   <MapDemo />
@@ -26,7 +32,7 @@
       <h1> O trânsito em São José dos Campos está <b :style="{ color: status.color }">{{ status.text }}</b> neste momento. </h1>
     </div>
     <Card
-        v-for="zone in zoneLevels"
+        v-for="zone in zones"
         :key="zone.id"
         :level="zone.level as Level"
         :region="zone.name"
