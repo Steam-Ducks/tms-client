@@ -133,6 +133,7 @@ const initMap = async () => {
     touchZoom: false,
     attributionControl: false
   })
+  map.setView([props.center[0] + 0.03, props.center[1]], 11)
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: 'lucas mapas',
@@ -238,6 +239,7 @@ onMounted(async () => {
   border-radius: 24px;
   cursor: default;
   box-shadow: none;
+  position: static;
 }
 
 .loading {
