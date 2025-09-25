@@ -25,16 +25,19 @@
     <div class="status-geral-cidade">
       <h1> O trânsito em São José dos Campos está <b :style="{ color: status.color }">{{ status.text }}</b> neste momento. </h1>
     </div>
-    <Card
-        v-for="zone in zoneLevels"
-        :key="zone.id"
-        :level="zone.level as Level"
-        :region="zone.name"
-    />
+    <div class="card-grid">
+      <Card
+          v-for="zone in zoneLevels"
+          :key="zone.id"
+          :level="zone.level as Level"
+          :region="zone.name"
+      />
+    </div>
   </div>
 </template>
 
 <style>
+
   @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&display=swap');
 
   * {
@@ -68,6 +71,12 @@
 
   }
 
-
+.card-grid {
+  display: flex;           /* isso é essencial para alinhar em linha */
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+}
 </style>
 
