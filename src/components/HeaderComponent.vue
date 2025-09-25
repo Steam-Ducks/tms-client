@@ -26,17 +26,14 @@ const goToLogin = () => {
 
 <style scoped>
 .header {
-  position: relative;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   margin: 16px auto;
   width: 90%;
   max-width: 1200px;
   height: 60px;
-
-
   padding: 0 32px;
   border-radius: 32px;
   background: rgba(30, 30, 30, 0.4);
