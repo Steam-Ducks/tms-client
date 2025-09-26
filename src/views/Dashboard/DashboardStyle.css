@@ -1,0 +1,47 @@
+.demo-page {
+  flex-direction: column;
+  align-items: center;
+}
+
+.map-card {
+    width: 100%;
+    height: 700px;
+    position: relative;
+}
+
+* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+}
+
+body {
+      font-family: 'Figtree', sans-serif;
+}
+
+.scrollable-content {
+    width: 100%;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    padding: 50px 20px;
+    min-height: 100vh;
+    justify-content: center;
+    text-align: center;
+}
+
+.status-geral-cidade {
+    color:#e0e0e0;
+    width: 100%;
+    padding-left: 30%;
+    padding-right: 30%;
+    text-align: center;
+    font-size: 90%;
+}
+
+.card-grid {
+    display: flex;          
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+}
