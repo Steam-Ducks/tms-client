@@ -6,6 +6,11 @@
   import { useDashboard } from './DashboardScript.ts'
   import './DashboardStyle.css'
   const { zones, status } = useDashboard()
+
+  const handleRegionClick = (regionId: string) => {
+    console.log('Region clicked:', regionId)
+  }
+
 </script>
 
 <template>
@@ -20,7 +25,7 @@
 
     <div class="scrollable-content">
       <div class="status-geral-cidade">
-        <h1> O trânsito em São José dos Campos está 
+        <h1> O trânsito em São José dos Campos está
           <b :style="{ color: status.color }">{{ status.text }}</b> neste momento.
         </h1>
       </div>
