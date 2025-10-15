@@ -1,18 +1,8 @@
-<!-- Dashboard.vue -->
 <script setup lang="ts">
-  import MapComponent from '@/components/MapComponent.vue'
-  import CaptionComponent from '@/components/CaptionComponent.vue'
-  import Card from '@/components/CardComponent.vue'
-  import { useDashboard } from './DashboardScript.ts'
-  import './DashboardStyle.css'
-  const { zones, status } = useDashboard()
-
-  const handleRegionClick = (regionId: string) => {
-    console.log('Region clicked:', regionId)
-  }
-
+  import { useDashboard } from './DashboardScript'
+  const { zones, status, handleRegionClick, MapComponent, CaptionComponent, Card } = useDashboard()
 </script>
-
+<style src="./DashboardStyle.css"/>
 <template>
   <div class="demo-page">
     <div class="map-card">
