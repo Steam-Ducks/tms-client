@@ -1,0 +1,40 @@
+.about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  width: 400px;
+  height: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.about h1 {
+  margin-bottom: 30px;
+  font-size: 26px;
+}
+
+.about input {
+  margin: 5px 0;
+  padding: 8px;
+  width: 80%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.about button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #1a73e8;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.about button:hover {
+  background-color: #1669c1;
+}
