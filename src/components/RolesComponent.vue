@@ -1,81 +1,85 @@
 <script setup lang="ts">
 import { Trash2, Edit3 } from 'lucide-vue-next'
 
-type User = {
+type role = {
   id: string | number
   name: string
   role: string
 }
 
 const props = defineProps<{
-  users: User[]         
+  roles: role[]         
 }>()
 
 const emit = defineEmits<{
   (e: 'add'): void
-  (e: 'edit', user: User): void
-  (e: 'delete', user: User): void
+  (e: 'edit', role: role): void
+  (e: 'delete', role: role): void
 }>()
 
 function onAdd() {
   emit('add')
 }
-function onEdit(user: User) {
-  emit('edit', user)
+function onEdit(role: role) {
+  emit('edit', role)
 }
-function onDelete(user: User) {
-  emit('delete', user)
+function onDelete(role: role) {
+  emit('delete', role)
 }
 </script>
 
 <template>
-  <div class="user-control">
-    <div class="head">
-      <h2>Usuários</h2>
-      <button type="button" class="add-button" @click="onAdd">Adicionar</button>
-    </div>
-
-    <div class="header-line"></div>
-
-    <div class="body">
-      <template v-if="users?.length">
-        <div
-          v-for="user in users"
-          :key="user.id"
-          class="user-card"
-        >
-          <div class="card-info">
-            <div class="user-name">{{ user.name }}</div>
-            <div class="user-role">{{ user.role }}</div>
-          </div>
-          <div class="card-actions">
-            <button type="button" class="edit-button" @click="onEdit(user)">
-              <Edit3 class="icon" />
-            </button>
-            <button type="button" class="delete-button" @click="onDelete(user)">
-              <Trash2 class="icon" />
-            </button>
-          </div>
+    <div class="role-control">
+        <div class="head">
+        <h2>Cargos</h2>
+        <button type="button" class="add-button" @click="onAdd">Adicionar</button>
         </div>
-      </template>
 
-      <div v-else class="empty">
-        Nenhum usuário encontrado.
-      </div>
+        <div class="header-line"></div>
+
+        <div class="body">
+            <template v-if="roles?.length">
+                <div
+                v-for="role in roles"
+                :key="role.id"
+                class="role-card"
+                >
+                <div class="card-info">
+                    <div class="role-name">{{ role.name }}</div>
+                    <div class="role-role">
+                        labels
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button type="button" class="edit-button" @click="onEdit(role)">
+                    <Edit3 class="icon" />
+                    </button>
+                    <button type="button" class="delete-button" @click="onDelete(role)">
+                    <Trash2 class="icon" />
+                    </button>
+                </div>
+                </div>
+            </template>
+
+            <div v-else class="empty">
+                Nenhum usuário encontrado.
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
-  .user-control {
+  .role-control {
     width: 100%;
-    height: 344px;
+    height: 421px;
     border-radius: 16px;
     background-color: #1d1d1d90;
     padding-bottom: 20px;
+    
+    margin-top: 10%;
   }
 
-  .user-control h2 {
+  .role-control h2 {
     color: #fff;
     padding: 20px;
     margin-left: 20px;
@@ -107,7 +111,7 @@ function onDelete(user: User) {
 
   .body { padding-top: 8px; }
 
-  .user-card{
+  .role-card{
     display: flex;
     padding: 12px 20px;
     margin: 0 20px 12px 20px;
@@ -128,8 +132,8 @@ function onDelete(user: User) {
     gap: 8px;
   }
 
-  .user-name { font-weight: 600; }
-  .user-role{
+  .role-name { font-weight: 600; }
+  .role-role{
     color: #bdbdbd;
     font-size: 14px;
   }

@@ -1,10 +1,7 @@
 <script lang="ts" setup>
-  import Card from '@/components/AdminCardComponent.vue'
-  import MessageControl from '@/components/MessageControlComponent.vue'
-  import UserComponent from '@/components/UsersComponent.vue'
-  import { useDashboard } from '../Dashboard/DashboardScript.ts'
-  import { linhas } from './AdminScript.ts'
-  const { zones, status } = useDashboard()
+  import { envios, users, handleAdd, handleDelete, handleEdit, Card, MessageControl, UserComponent, RolesComponent, roles } from './AdminScript.ts'
+    import { useDashboard } from '../Dashboard/DashboardScript.ts'
+    const { zones, status } = useDashboard()
 </script>
 
 <style src="./AdminStyle.css" scoped/>
@@ -25,9 +22,20 @@
         />
     </div>
     <div class="admin-body">
-        <MessageControl :rows="linhas" />
-        <div style="width:30%;">
-            <UserComponent />
+        <MessageControl :rows="envios" />
+        <div class="side-cards">
+            <UserComponent
+                :users="users"
+                @add="handleAdd"
+                @edit="handleEdit"
+                @delete="handleDelete"
+            />
+            <RolesComponent
+                :roles="roles"
+                @add="handleAdd"
+                @edit="handleEdit"
+                @delete="handleDelete"
+            />
         </div>
     </div>
 </template>
