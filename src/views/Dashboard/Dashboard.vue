@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { useDashboard } from './DashboardScript'
-  const { zones, status, handleRegionClick, MapComponent, CaptionComponent, Card } = useDashboard()
+  const { zones, status, handleRegionClick, MapComponent, CaptionComponent, Card,
+          DoubleBarChart, weeklySpeedData } = useDashboard()
 </script>
 <style src="./DashboardStyle.css"/>
 <template>
@@ -28,6 +29,15 @@
           :region="zone.name"
         />
       </div>
+
+      <div class="charts-area">
+          <div class="chart-wrapper">
+            <h3 class="chart-title">Comparação de Velocidade Média Semanal</h3>
+              <DoubleBarChart
+                  :chart-data="weeklySpeedData"
+              />
+          </div>
+      </div>
     </div>
-  </div>
+</div>
 </template>

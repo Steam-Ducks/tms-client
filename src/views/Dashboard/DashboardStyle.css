@@ -39,9 +39,43 @@ body {
 }
 
 .card-grid {
-    display: flex;          
+    display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
     margin-top: 30px;
+}
+
+
+.charts-area {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 30px;
+    margin-top: 120px;
+    padding-left: 30px;
+    width: 100%;
+}
+
+
+.chart-wrapper {
+    width: 550px;
+    height: 380px;
+    padding: 15px 15px 45px 15px;
+    background-color: #2a2a2a;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+}
+
+
+.chart-title {
+    color: #e0e0e0;
+    font-family: 'Figtree', sans-serif;
+    font-size: 1.25em;
+    font-weight: 600;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+    padding: 0 15px;
 }

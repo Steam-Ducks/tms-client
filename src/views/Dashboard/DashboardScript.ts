@@ -5,6 +5,7 @@ import { useLevelStatus } from "@/services/LevelStatus"
 import MapComponent from '@/components/MapComponent.vue'
 import CaptionComponent from '@/components/CaptionComponent.vue'
 import Card from '@/components/CardComponent.vue'
+import DoubleBarChart from '@/components/DoubleBarChart.vue'
 
 export function useDashboard() {
   const zones = ref<ZoneLevel[]>([])
@@ -31,6 +32,14 @@ export function useDashboard() {
       setLevel(3)
     }
   }
+
+  const weeklySpeedData = {
+  labels: ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'],
+  datasets: [
+    { label: 'Semana 1', backgroundColor: '#1174e6', data: [1, 2, 3, 4, 5, 7, 9] },
+    { label: 'Semana 2', backgroundColor: '#E15759', data: [3, 5, 8, 7, 4, 5, 6] },
+  ],
+};
 
   onMounted(async () => {
     await fetchZones()
@@ -59,6 +68,8 @@ export function useDashboard() {
     // Components
     MapComponent,
     CaptionComponent,
-    Card
+    Card,
+    DoubleBarChart,
+    weeklySpeedData
   }
 }
