@@ -1,19 +1,8 @@
 <script lang="ts" setup>
-    import { ref } from 'vue';
-    import { useLogin } from './LoginScript';
-    import './LoginStyle.css';
-
-    const nome = ref('');
-    const senha = ref('');
-
-    const { erro, loginWrapper } = useLogin();
-
-    async function onSubmit(e: Event) {
-    e.preventDefault();
-    await loginWrapper(nome.value, senha.value);
-    }
+  import { useLogin } from './LoginScript';
+  const { nome, senha, onSubmit } = useLogin();
 </script>
-
+<style src="./LoginStyle.css" />
 
 <template>
   <div class="about">
@@ -31,6 +20,5 @@
 
     <button @click="onSubmit">Login</button>
 
-    <p v-if="erro">{{ erro }}</p>
   </div>
 </template>

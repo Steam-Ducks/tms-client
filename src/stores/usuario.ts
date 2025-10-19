@@ -2,9 +2,7 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import LoginService from "@/services/LoginService";
 
-export const useUsuarioStore = defineStore(
-  "usuario",
-  () => {
+export const usuarioStore = defineStore("usuario", () => {
     const nomeUsuario = ref<string | null>(null);
     const token = ref<string | null>(null);
     const tokenType = ref<string>("Bearer");

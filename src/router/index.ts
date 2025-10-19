@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Dashboard from '../views/Dashboard/Dashboard.vue';
 import DefaultLayout from '../layout/DefaultLayout.vue';
 import Login from '../views/Login/Login.vue';
-
+import Admin from '../views/Admin/Admin.vue'; 
+import { usuarioStore } from '@/stores/usuario'; 
 
 const routes = [
   {
@@ -13,12 +14,20 @@ const routes = [
         path: '',
         name: 'Dashboard',
         component: Dashboard
-      }
+      },
+
     ]
   },
   {
     path: '/login',
+    name: 'Login',
     component: Login
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin,
+    meta: { requiresAuth: true } 
   },
 ];
 
@@ -27,5 +36,13 @@ const router = createRouter({
   routes,
 });
 
-export default router
+router.beforeEach((to, _from, next) => {
+  const store = usuarioStore();
+  if (to.meta.requiresAuth && !store.token) {
+    next({ name: 'Login' }); 
+  } else {
+    next();
+  }
+});
 
+export default router;

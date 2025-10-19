@@ -1,13 +1,24 @@
-import { storeToRefs } from 'pinia';
-import { useUsuarioStore } from '@/stores/usuario';
+import { ref } from 'vue';
+import { usuarioStore } from '@/stores/usuario';
+import { useRouter } from 'vue-router';
 
-export function useLogin() {
-  const store = useUsuarioStore();
-  const { erro, token, nomeUsuario } = storeToRefs(store);
+export function useLogin() {  
+  const nome = ref('');
+  const senha = ref('');
+  const store = usuarioStore();
+  const router = useRouter();                     
 
   async function loginWrapper(nome: string, senha: string) {
     await store.login(nome, senha); 
   }
 
-  return { erro, token, nomeUsuario, loginWrapper };
+  async function onSubmit(e: Event) {
+    e.preventDefault();
+    await store.login(nome.value, senha.value);
+    if (store.token) {
+      router.push('/admin'); 
+    }
+  }
+
+  return {nome, senha, loginWrapper, onSubmit};
 }
