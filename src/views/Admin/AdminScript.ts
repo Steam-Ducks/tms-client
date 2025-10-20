@@ -2,6 +2,12 @@ import Card from '@/components/AdminCardComponent.vue'
 import MessageControl from '@/components/MessageControlComponent.vue'
 import UserComponent from '@/components/UsersComponent.vue'
 import RolesComponent from '@/components/RolesComponent.vue'
+import { useDashboard } from '../Dashboard/DashboardScript.ts'
+const { zones, status } = useDashboard()
+
+const SendMessages = () => {
+    // Todo: Implement send messages functionality
+}
 
 const envios = [
   {
@@ -134,9 +140,9 @@ function handleDelete(user: any) {
 }
 
 const roles = [
-  { id: 1, name: 'Cargo 1' },
-  { id: 2, name: 'Cargo 2' },
-  { id: 3, name: 'Cargo 3' },
+  { id: 1, name: 'Cargo 1', zonas: ['Zona Sudeste', 'Zona Sul'], },
+  { id: 2, name: 'Cargo 2', zonas: ['Zona Norte', 'Zona Sul', 'Zona Oeste', 'Zona Lest'], },
+  { id: 3, name: 'Cargo 3', zonas: ['Zona Norte', 'Zona Sul', 'Zona Sudeste', 'Zona Oeste', 'Zona Lest'], },
 ];
 
-export { envios, users, handleAdd, handleEdit, handleDelete, Card, MessageControl, UserComponent, RolesComponent, roles };
+export { SendMessages, envios, users, handleAdd, handleEdit, handleDelete, Card, MessageControl, UserComponent, RolesComponent, roles, zones, status };

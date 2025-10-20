@@ -1,31 +1,33 @@
 <script setup lang="ts">
-import { Trash2, Edit3 } from 'lucide-vue-next'
+  import { Trash2, Edit3 } from 'lucide-vue-next'
 
-type role = {
-  id: string | number
-  name: string
-  role: string
-}
+  type Role = {
+    id: string | number
+    name: string
+    zonas: string[]
+  }
 
-const props = defineProps<{
-  roles: role[]         
-}>()
+  const props = defineProps<{
+    roles: Role[]
+  }>()
 
-const emit = defineEmits<{
-  (e: 'add'): void
-  (e: 'edit', role: role): void
-  (e: 'delete', role: role): void
-}>()
+  const emit = defineEmits<{
+    (e: 'add'): void
+    (e: 'edit', role: Role): void
+    (e: 'delete', role: Role): void
+  }>()
 
-function onAdd() {
-  emit('add')
-}
-function onEdit(role: role) {
-  emit('edit', role)
-}
-function onDelete(role: role) {
-  emit('delete', role)
-}
+  function onAdd() { emit('add') }
+  function onEdit(role: Role) { emit('edit', role) }
+  function onDelete(role: Role) { emit('delete', role) }
+
+  const zoneClass: Record<string, string> = {
+    'Zona Sul': 'chip--sul',
+    'Zona Sudeste': 'chip--sudeste',
+    'Zona Oeste': 'chip--oeste',
+    'Zona Leste': 'chip--leste',
+    'Zona Norte': 'chip--norte'
+  }
 </script>
 
 <template>
@@ -46,8 +48,10 @@ function onDelete(role: role) {
                 >
                 <div class="card-info">
                     <div class="role-name">{{ role.name }}</div>
-                    <div class="role-role">
-                        labels
+                    <div class="role-role labels">
+                      <span v-for="z in role.zonas" :key="`${role.id}-${z}`" class="chip" :class="zoneClass[z] || 'chip--default'">
+                        {{ z }}
+                      </span>
                     </div>
                 </div>
                 <div class="card-actions">
@@ -165,4 +169,30 @@ function onDelete(role: role) {
     color: #bdbdbd;
     padding: 24px 0;
   }
+
+  .labels{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;     
+    margin-top: 8px;
+  }
+
+  .chip{
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+    color: #fff;
+  }
+
+  .chip--sul      { background-color: #15b559; }  
+  .chip--sudeste  { background-color: #7c2ae8; }  
+  .chip--oeste    { background-color: #ff7a00; } 
+  .chip--leste    { background-color: #ffb300; } 
+  .chip--norte    { background-color: #e3273a; } 
+  .chip--default  { background-color: #555; }
+
 </style>
