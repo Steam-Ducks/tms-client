@@ -2,14 +2,10 @@
 import { computed, defineProps } from 'vue';
 
 interface DonutChartProps {
-
-  regionName: string;
-
-  value: number;
-
-  limit: number;
-
-  difference: number;
+regionName: string;
+value: number;
+limit: number;
+difference: number;
 }
 
 const props = defineProps<DonutChartProps>();
@@ -20,7 +16,9 @@ const radius = 45;
 const circumference = 2 * Math.PI * radius;
 
 // Calcula a porcentagem do valor atingido
-const percentage = computed(() => Math.min(100, Math.max(0, (props.value / props.limit) * 100)));
+const percentage = computed(() =>
+  Math.min(100, Math.max(0, (props.value / props.limit) * 100))
+);
 
 // Calcula o quanto da rosca deve ser preenchido
 const dashArray = computed(() => {
@@ -30,12 +28,11 @@ const dashArray = computed(() => {
 
 // Define a cor da rosca com base na diferença
 const progressColor = computed(() => {
-    if (props.difference < 0 || props.value > (props.limit * 1.10)) {
-        return '#E15759';
-    }
-    return '#1174e6';
+  if (props.difference < 0 || props.value > props.limit * 1.1) {
+    return '#E15759';
+  }
+  return '#1174e6';
 });
-
 </script>
 
 <template>
@@ -71,61 +68,59 @@ const progressColor = computed(() => {
 
 <style scoped>
 .donut-card-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
 }
 
+
 .donut-title {
-    font-family: 'Figtree', sans-serif;
-    font-size: 1.5em;
-    font-weight: 600;
-    color: #e0e0e0;
-    margin-bottom: 15px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 1.1em;
+  font-weight: 400;
+  color: #e0e0e0;
+  margin-bottom: 5px;
 }
 
 .donut-chart-wrapper {
-    position: relative;
-    width: 250px;
-    height: 250px;
+  position: relative;
+  width: 200px;
+  height: 200px;
 }
 
 .donut-svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
 }
-
 
 .donut-bg {
-    fill: none;
-    stroke: #3c3c3c;
-    stroke-width: 10;
+  fill: none;
+  stroke: #3c3c3c;
+  stroke-width: 10;
 }
-
 
 .donut-progress {
-    fill: none;
-    stroke-width: 10;
-    stroke-dashoffset: 0;
-    transition: stroke-dasharray 0.5s linear;
-    stroke-linecap: round;
+  fill: none;
+  stroke-width: 10;
+  stroke-dashoffset: 0;
+  transition: stroke-dasharray 0.5s linear;
+  stroke-linecap: round;
 }
 
-
 .donut-label {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: 'Figtree', sans-serif;
-    font-size: 1.5em;
-    font-weight: 700;
-    color: #e0e0e0;
-    width: 80%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Figtree', sans-serif;
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #e0e0e0;
+  width: 80%;
 }
 </style>

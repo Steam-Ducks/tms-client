@@ -7,6 +7,7 @@ import CaptionComponent from '@/components/CaptionComponent.vue'
 import Card from '@/components/CardComponent.vue'
 import DoubleBarChart from '@/components/DoubleBarChart.vue'
 import DonutChart from '@/components/DonutChart.vue'
+import LineChart from '@/components/LineChart.vue'
 
 export function useDashboard() {
   const zones = ref<ZoneLevel[]>([])
@@ -49,6 +50,23 @@ export function useDashboard() {
       difference: 8,
 };
 
+    const hourlySpeedData = {
+      labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
+      datasets: [
+          {
+              label: 'Velocidade Média',
+              borderColor: '#1174e6',
+              backgroundColor: 'rgba(17, 116, 230, 0.2)',
+              fill: true,
+              data: [
+                  10, 12, 15, 20, 35, 45, 50, 25, 20, 28, 35, 40,
+                  45, 42, 38, 30, 22, 15, 18, 25, 30, 35, 40, 30
+              ],
+          },
+      ],
+  };
+
+
   onMounted(async () => {
     await fetchZones()
     await updateCityLevel()
@@ -80,6 +98,8 @@ export function useDashboard() {
     DoubleBarChart,
     weeklySpeedData,
     DonutChart,
-    donutChartData
+    donutChartData,
+    LineChart,
+    hourlySpeedData,
   }
 }
