@@ -91,6 +91,3 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-/* Estilos específicos do componente */
-</style>

@@ -50,13 +50,24 @@ body {
 .charts-area {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 30px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 35px;
     margin-top: 120px;
-    padding-left: 30px;
+    padding: 0 30px;
     width: 100%;
 }
 
+.chart-title {
+    color: #e0e0e0;
+    font-family: 'Figtree', sans-serif;
+    font-size: 1.25em;
+    font-weight: 600;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    text-align: start;
+    padding: 0 15px;
+}
 
 .chart-wrapper {
     width: 550px;
@@ -69,13 +80,19 @@ body {
 }
 
 
-.chart-title {
-    color: #e0e0e0;
+.donut-title {
     font-family: 'Figtree', sans-serif;
-    font-size: 1.25em;
+    font-size: 1.5em;
     font-weight: 600;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    text-align: center;
-    padding: 0 15px;
+    color: #e0e0e0;
+    text-align: start;
+    margin-bottom: 15px;
+}
+
+.donut-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 15px;
 }

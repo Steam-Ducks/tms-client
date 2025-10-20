@@ -6,6 +6,7 @@ import MapComponent from '@/components/MapComponent.vue'
 import CaptionComponent from '@/components/CaptionComponent.vue'
 import Card from '@/components/CardComponent.vue'
 import DoubleBarChart from '@/components/DoubleBarChart.vue'
+import DonutChart from '@/components/DonutChart.vue'
 
 export function useDashboard() {
   const zones = ref<ZoneLevel[]>([])
@@ -41,6 +42,13 @@ export function useDashboard() {
   ],
 };
 
+  const donutChartData = {
+      regionName: "Avenida 501",
+      value: 92,
+      limit: 100,
+      difference: 8,
+};
+
   onMounted(async () => {
     await fetchZones()
     await updateCityLevel()
@@ -70,6 +78,8 @@ export function useDashboard() {
     CaptionComponent,
     Card,
     DoubleBarChart,
-    weeklySpeedData
+    weeklySpeedData,
+    DonutChart,
+    donutChartData
   }
 }
