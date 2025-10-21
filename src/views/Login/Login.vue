@@ -6,7 +6,7 @@
 
 <template>
   <div class="about">
-    <h1 id="hello">Usuários</h1>
+    <img src="/src/trafegou.png" alt="Logo" class="logo-top" />
 
     <p>
       <label for="nome" id="labelNome">Nome: </label>
