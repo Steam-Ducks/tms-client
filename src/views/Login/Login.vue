@@ -19,6 +19,14 @@
     </p>
 
     <button @click="onSubmit">Login</button>
+    <p class="support-text">
+      Problemas de acesso? Contate o <p></p>administrador.
+    </p>
+
+    <div class="logos">
+      <img src="/src/prefeitura.png" alt="Prefeitura" class="logo-left" />
+      <img src="/src/sd.png" alt="Steam Ducks" class="logo-right" />
+    </div>
 
   </div>
 </template>
