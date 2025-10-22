@@ -49,14 +49,20 @@
   border: none;
   border-radius: 6px;
   outline: none;
-  background: #fffbe6;
+  background: rgba(255, 255, 255, 0.1);
   font-size: 14px;
 }
 
+/* Adicione um estado de foco para acessibilidade, como discutimos antes */
+.about input:focus {
+  border-color: #fdb913; /* A cor da borda muda para sua cor principal ao focar */
+  box-shadow: 0 0 0 1px #fdb913; /* Um brilho sutil */
+}
+
 .about button {
-  margin-top: 20px;
+  margin-top: 30px;
   padding: 12px;
-  width: 100%;
+  width: 65%;
   border: none;
   border-radius: 6px;
   background-color: #fdb913;
