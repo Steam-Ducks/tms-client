@@ -39,9 +39,82 @@ body {
 }
 
 .card-grid {
-    display: flex;          
+    display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 30px;
     justify-content: center;
     margin-top: 30px;
+}
+
+
+.charts-area {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    margin-top: 115px;
+    padding: 0;
+    width: 100%;
+}
+
+.chart-title {
+    color: #e0e0e0;
+    font-family: 'Figtree', sans-serif;
+    font-size: 1.25em;
+    font-weight: 600;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    text-align: start;
+    padding: 0 15px;
+}
+
+
+.chart-wrapper {
+    width: 480px;
+    height: 320px;
+    padding: 15px 15px 45px 15px;
+    background-color: #2a2a2a;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+}
+
+
+.donut-title {
+    font-family: 'Figtree', sans-serif;
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #e0e0e0;
+    text-align: start;
+    margin-bottom: 15px;
+}
+
+.donut-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 15px;
+}
+
+.charts-area.line-chart-area {
+    justify-content: center;
+    padding-left: 0;
+    margin-top: 30px;
+}
+
+
+
+.chart-wrapper.line-chart-wrapper {
+    width: 995px;
+    height: 350px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.line-chart-wrapper .chart-title {
+    text-align: center;
 }
