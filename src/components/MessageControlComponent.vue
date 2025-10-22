@@ -50,12 +50,6 @@
           </td>
         </tr>
       </tbody>
-
-      <tbody v-else>
-        <tr>
-          <td colspan="6" class="empty">Nenhum registro encontrado.</td>
-        </tr>
-      </tbody>
     </table>
 
   </div>

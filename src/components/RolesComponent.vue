@@ -64,10 +64,6 @@
                 </div>
                 </div>
             </template>
-
-            <div v-else class="empty">
-                Nenhum usuário encontrado.
-            </div>
         </div>
     </div>
 </template>
@@ -78,8 +74,7 @@
     height: 421px;
     border-radius: 16px;
     background-color: #1d1d1d90;
-    padding-bottom: 20px;
-    
+    padding-bottom: 20px; 
     margin-top: 10%;
   }
 
