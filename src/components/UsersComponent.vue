@@ -161,8 +161,6 @@ function onDelete(user: User) {
     overflow-y: auto;  
     height: 70%;      
     width: 95%;  
-  }
-  .body {
     scrollbar-width: thin;
     scrollbar-color: #4b4b4b transparent;
   }

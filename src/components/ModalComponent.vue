@@ -21,13 +21,16 @@ function onBackdrop() { emit('close'); }
   z-index: 999;
 }
 .modal{
-  width: min(560px, 92vw);
+  width: 400px;
+  height: 480px;
   background: #1f1f1f;
   color: #fff;
   border-radius: 16px;
   padding: 18px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.4);
   position: relative;
+  align-items: center;
+  justify-content: center;
 }
 .close{
   position: absolute; top: 10px; right: 10px;

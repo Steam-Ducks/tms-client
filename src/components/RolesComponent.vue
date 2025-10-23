@@ -106,9 +106,16 @@
     cursor: pointer;
     border: 1px solid transparent;
   }
-  .add-button:hover { background-color: #00bf6366; }
+  .add-button:hover { background-color: #00bf6366; }  
 
-  .body { padding-top: 8px; }
+    .body {
+      padding-top: 8px; 
+      overflow-y: auto;  
+      height: 70%;      
+      width: 95%;  
+      scrollbar-width: thin;
+      scrollbar-color: #4b4b4b transparent;
+    }
 
   .role-card{
     display: flex;
