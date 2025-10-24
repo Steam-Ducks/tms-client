@@ -1,26 +1,30 @@
 <script lang="ts" setup>
   import { useLogin } from './LoginScript';
-  const { nome, senha, onSubmit } = useLogin();
+  const { nome, senha, erro, onSubmit } = useLogin();
 </script>
 
 <style scoped src="./LoginStyle.css"></style>
 
 <template>
   <div class="login-page">
-    <div class="about">
+    <!-- adiciona a classe condicional pra animar quando houver erro -->
+    <div class="about" :class="{ shake: erro }">
       <img src="/src/trafegou.png" alt="Logo" class="logo-top" />
 
       <p>
-        <label for="nome" id="labelNome">Nome: </label>
+        <label for="nome" id="labelNome">Nome:</label>
         <input id="nome" type="text" v-model="nome" />
       </p>
 
       <p>
-        <label for="senha" id="labelSenha">Senha: </label>
+        <label for="senha" id="labelSenha">Senha:</label>
         <input id="senha" type="password" v-model="senha" />
       </p>
 
       <button @click="onSubmit">Login</button>
+
+      <!-- mensagem de erro com animação -->
+      <p v-if="erro" class="error-msg">{{ erro }}</p>
 
       <p class="support-text">
         Problemas de acesso? Contate o <br>administrador
