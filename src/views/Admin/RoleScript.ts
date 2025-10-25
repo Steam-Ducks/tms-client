@@ -21,31 +21,16 @@ export function useRoles() {
   const roleFormMode = ref<Mode>('create')
   const editingRoleId = ref<number | string | undefined>(undefined)
 
-  // >>> ALTERAÇÃO: agora o payload tem regionIds (array)
   const form = reactive<RolePayload>({
     description: '',
     regionIds: [],
   })
 
-  // Helper pra montar texto amigável com múltiplas regiões
   function joinRegions(r: Role): string {
-    // Tente usar nomes se vierem do backend
-    const names =
-      (Array.isArray((r as any).regionNames) && (r as any).regionNames.length
-        ? (r as any).regionNames
-        : (r as any).regions?.map((z: any) => z.name)) as string[] | undefined
-
-    if (names && names.length) return names.join(', ')
-
-    // Caso só tenhamos IDs
-    const ids: number[] =
-      Array.isArray((r as any).regionIds) && (r as any).regionIds.length
-        ? (r as any).regionIds
-        : (r as any).regionId != null
-          ? [Number((r as any).regionId)]
-          : []
-
-    return ids.length ? ids.map((id) => `#${id}`).join(', ') : '—'
+    if (r.regions && r.regions.length > 0) {
+      return r.regions.map(region => region.name).join(', ')
+    }
+    return '—'
   }
 
   function mapToCard(r: Role): RoleCard {
@@ -63,8 +48,8 @@ export function useRoles() {
       const data = await RoleService.list()
       rawRoles.value = data
       rolesList.value = (data ?? []).map(mapToCard)
-    } catch (e: any) {
-      rolesError.value = e.message ?? 'Falha ao carregar roles.'
+    } catch (e: unknown) {
+      rolesError.value = (e as Error).message ?? 'Falha ao carregar roles.'
     } finally {
       loadingRoles.value = false
     }
@@ -74,7 +59,7 @@ export function useRoles() {
     roleFormMode.value = 'create'
     editingRoleId.value = undefined
     form.description = ''
-    form.regionIds = [] // <<< limpa o array
+    form.regionIds = [] // Clear array
     showRoleForm.value = true
   }
 
@@ -84,14 +69,7 @@ export function useRoles() {
     const r = await RoleService.getById(card.id)
     form.description = r.description
 
-    // <<< GARANTE ARRAY independente do que vier do backend
-    const arr =
-      Array.isArray((r as any).regionIds) && (r as any).regionIds.length
-        ? (r as any).regionIds
-        : (r as any).regionId != null
-          ? [Number((r as any).regionId)]
-          : []
-    form.regionIds = [...arr]
+    form.regionIds = r.regions ? r.regions.map(region => region.id) : []
 
     showRoleForm.value = true
   }
@@ -122,11 +100,11 @@ export function useRoles() {
         background: '#1e1e1e',
         color: '#fff',
       })
-    } catch (e: any) {
+    } catch (e: unknown) {
       await Swal.fire({
         icon: 'error',
         title: 'Erro',
-        text: e.message ?? 'Falha ao excluir role.',
+        text: (e as Error).message ?? 'Falha ao excluir role.',
         background: '#1e1e1e',
         color: '#fff',
       })
@@ -140,13 +118,13 @@ export function useRoles() {
         throw new Error('Selecione ao menos uma região.')
       }
 
-      if (roleFormMode.value === 'create') {
-        // <<< ENVIA ARRAY
-        const saved = await RoleService.create({
-          description: form.description.trim(),
-          regionIds: form.regionIds.map(Number),
-        } as RolePayload)
+      const payload: RolePayload = {
+        description: form.description.trim(),
+        regionIds: form.regionIds.map(Number),
+      }
 
+      if (roleFormMode.value === 'create') {
+        const saved = await RoleService.create(payload)
         rolesList.value = [mapToCard(saved), ...rolesList.value]
         await Swal.fire({
           icon: 'success',
@@ -159,11 +137,7 @@ export function useRoles() {
       } else {
         if (editingRoleId.value == null) throw new Error('ID não informado para edição.')
 
-        const saved = await RoleService.update(editingRoleId.value, {
-          description: form.description.trim(),
-          regionIds: form.regionIds.map(Number),
-        } as RolePayload)
-
+        const saved = await RoleService.update(editingRoleId.value, payload)
         const card = mapToCard(saved)
         rolesList.value = rolesList.value.map((r) => (r.id === card.id ? card : r))
         await Swal.fire({
@@ -176,11 +150,11 @@ export function useRoles() {
         })
       }
       showRoleForm.value = false
-    } catch (e: any) {
+    } catch (e: unknown) {
       await Swal.fire({
         icon: 'error',
         title: 'Erro',
-        text: e.message ?? 'Falha ao salvar role.',
+        text: (e as Error).message ?? 'Falha ao salvar role.',
         background: '#1e1e1e',
         color: '#fff',
       })

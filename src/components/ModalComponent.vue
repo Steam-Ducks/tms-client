@@ -22,7 +22,8 @@ function onBackdrop() { emit('close'); }
 }
 .modal{
   width: 400px;
-  height: 480px;
+  min-height: 30%;
+  height: auto;
   background: #1f1f1f;
   color: #fff;
   border-radius: 16px;
@@ -31,6 +32,8 @@ function onBackdrop() { emit('close'); }
   position: relative;
   align-items: center;
   justify-content: center;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 .close{
   position: absolute; top: 10px; right: 10px;

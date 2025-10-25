@@ -5,11 +5,13 @@ export interface UserPayload {
   username: string;
   email: string;
   phoneNumber: string;
-  password?: string; 
+  password?: string;
+  roleId?: number;
 }
 
 export interface User extends Required<UserPayload> {
   id: number | string;
+  roleDescription?: string;
 }
 
 const api = axios.create({
@@ -18,18 +20,19 @@ const api = axios.create({
 });
 
 function parseError(e: unknown): never {
-  const err = e as AxiosError<any>;
+  const err = e as AxiosError<{message?: string}>;
   throw new Error(err.response?.data?.message || err.message || "Erro inesperado");
 }
 
 class UserService {
-  async register({ username, email, password, phoneNumber }: UserPayload): Promise<User> {
+  async register({ username, email, password, phoneNumber, roleId }: UserPayload): Promise<User> {
     try {
       const { data } = await api.post("/auth/register", {
         username,
         email,
         password,
         phoneNumber,
+        roleId,
       });
       return data;
     } catch (e) {
@@ -57,10 +60,13 @@ class UserService {
 
   async update(id: string | number, payload: UserPayload): Promise<User> {
     try {
-      const body: any = {
+      // DEBUG: Print id and payload before sending to backend
+      console.debug('[UserService.update] id:', id, 'payload:', JSON.stringify(payload));
+      const body: Partial<UserPayload> = {
         username: payload.username,
         email: payload.email,
         phoneNumber: payload.phoneNumber,
+        roleId: payload.roleId,
       };
       if (payload.password && payload.password.length >= 6) {
         body.password = payload.password;

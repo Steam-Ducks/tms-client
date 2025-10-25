@@ -2,7 +2,7 @@
   <form @submit.prevent="onSubmit" class="form">
     <div class="form-group">
       <label for="username">Nome</label>
-      <input id="username" type="text" v-model.trim="form.username" placeholder="Whatsapp da Silva Jr." required />
+      <input id="username" type="text" v-model.trim="form.username" placeholder="Nome" required />
     </div>
 
     <div class="form-group">
@@ -19,6 +19,16 @@
         placeholder="(11) 98765-4321"
         maxlength="15"
       />
+    </div>
+
+    <div class="form-group">
+      <label for="roleId">Cargo</label>
+      <select id="roleId" v-model="form.roleId" required>
+        <option :value="undefined">Selecione um cargo</option>
+        <option v-for="role in roles" :key="role.id" :value="role.id">
+          {{ role.description }}
+        </option>
+      </select>
     </div>
 
     <div class="form-group">
@@ -47,7 +57,7 @@
             <path d="M22.94 12.94A10.94 10.94 0 0 0 12 4a10.94 10.94 0 0 0-3.12.44"/>
           </svg>
         </button>
-        
+
         </div>
     </div>
 
@@ -64,7 +74,9 @@
 <script setup lang="ts">
   import { onMounted, reactive, ref, watch } from "vue";
   import UserService from "@/services/UserService";
+  import RoleService from "@/services/RoleService";
   import type { User, UserPayload } from "@/services/UserService";
+  import type { Role } from "@/services/RoleService";
 
   type Mode = "create" | "edit";
 
@@ -83,12 +95,14 @@
   const error = ref<string | null>(null);
   const successMsg = ref<string | null>(null);
   const showPassword = ref(false);
+  const roles = ref<Role[]>([]);
 
   const form = reactive<UserPayload>({
     username: "",
     email: "",
     phoneNumber: "",
     password: "",
+    roleId: undefined,
   });
 
   function maskPhone(raw: string | null | undefined): string {
@@ -107,12 +121,14 @@
     return "";
   }
 
-
-  function applyPhoneMask(e: Event) {
-    const input = e.target as HTMLInputElement;
-    const masked = maskPhone(input.value);
-    input.value = masked;
-    form.phoneNumber = masked;
+  function resetForm() {
+    form.username = "";
+    form.email = "";
+    form.phoneNumber = "";
+    form.password = "";
+    form.roleId = undefined;
+    error.value = null;
+    successMsg.value = null;
   }
 
   async function loadIfEdit() {
@@ -131,18 +147,57 @@
 
       form.username = merged.username ?? "";
       form.email = merged.email ?? "";
-      form.phoneNumber = maskPhone(merged.phoneNumber ?? ""); 
+      form.phoneNumber = maskPhone(merged.phoneNumber ?? "");
       form.password = "";
-    } catch (e: any) {
-      error.value = e.message || "Falha ao carregar usuário.";
+
+      // Handle roleId - if we have a roleDescription, find the matching role ID
+      if (merged.roleDescription && roles.value.length > 0) {
+        const matchingRole = roles.value.find(role => role.description === merged.roleDescription);
+        form.roleId = matchingRole ? (typeof matchingRole.id === 'number' ? matchingRole.id : Number(matchingRole.id)) : undefined;
+      } else {
+        form.roleId = merged.roleId;
+      }
+    } catch (e: unknown) {
+      error.value = (e as Error).message || "Falha ao carregar usuário.";
     } finally {
       loading.value = false;
     }
   }
 
-  onMounted(loadIfEdit);
-  watch(() => props.userId, loadIfEdit);
-  watch(() => props.initialUser, loadIfEdit, { deep: true });
+  async function loadRoles() {
+    try {
+      const rolesList = await RoleService.list();
+      roles.value = rolesList;
+    } catch (e: unknown) {
+      console.error("Falha ao carregar cargos:", e);
+    }
+  }
+
+  onMounted(async () => {
+    await loadRoles();
+    if (props.mode === "create") {
+      resetForm();
+    } else {
+      await loadIfEdit();
+    }
+  });
+
+  watch(() => props.mode, async (newMode) => {
+    if (newMode === "create") {
+      resetForm();
+    } else {
+      await loadIfEdit();
+    }
+  });
+
+  watch(() => props.userId, async () => {
+    await loadRoles();
+    await loadIfEdit();
+  });
+  watch(() => props.initialUser, async () => {
+    await loadRoles();
+    await loadIfEdit();
+  }, { deep: true });
   watch(() => form.phoneNumber, (val) => {
     const masked = maskPhone(val);
     if (val !== masked) form.phoneNumber = masked;
@@ -170,8 +225,9 @@
         const payload: UserPayload = {
           username: form.username,
           email: form.email,
-          phoneNumber: form.phoneNumber.replace(/\D/g, ""), 
+          phoneNumber: form.phoneNumber.replace(/\D/g, ""),
           password: form.password,
+          roleId: form.roleId,
         };
         saved = await UserService.register(payload);
         successMsg.value = "Usuário cadastrado com sucesso!";
@@ -181,6 +237,7 @@
           username: form.username,
           email: form.email,
           phoneNumber: form.phoneNumber.replace(/\D/g, ""),
+          roleId: form.roleId,
         };
         if (form.password && form.password.length >= 6) {
           payload.password = form.password;
@@ -190,8 +247,8 @@
       }
 
       emit("success", saved);
-    } catch (e: any) {
-      error.value = e.message || "Erro ao salvar.";
+    } catch (e: unknown) {
+      error.value = (e as Error).message || "Erro ao salvar.";
     } finally {
       loading.value = false;
     }
@@ -205,7 +262,9 @@
     margin: 15px;
   }
   .form-group{
-    margin-top: 10px
+    margin-top: 10px;
+    width: 100%;
+    box-sizing: border-box;
   }
   label {
     display: inline-block;
@@ -213,12 +272,22 @@
     font-size: 13px;
     padding-bottom: 5px;
   }
-  input {
+  input, select {
     width: 100%;
     padding: 8px;
     background-color: #ffffff19;
     border: 1px solid #cccccc00;
     border-radius: 6px;
+    color: white;
+    box-sizing: border-box;
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  select option {
+    background-color: #2c3e50;
     color: white;
   }
   .password-wrapper {
@@ -228,7 +297,7 @@
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
     border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;    
+    border-bottom-left-radius: 10px;
   }
   .toggle {
     background-color: #ffffff2f;
@@ -268,7 +337,6 @@
   }
   button {
     width: 30%;
-    height: 15%;
     padding: 8px 14px;
     border-radius: 8px;
     border: none;

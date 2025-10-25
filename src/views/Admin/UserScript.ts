@@ -42,13 +42,18 @@ export function useUsers() {
   function handleAdd() {
     userFormMode.value = 'create'
     editingUserId.value = undefined
-    Object.assign(initialUser, { username: '', email: '', phoneNumber: '', password: '' })
+    Object.keys(initialUser).forEach(key => {
+      delete initialUser[key]
+    })
+    Object.assign(initialUser, { username: '', email: '', phoneNumber: '', password: '', roleId: undefined })
     showUserForm.value = true
   }
   function handleEdit(user: { id: string | number; name: string; role?: string }) {
     userFormMode.value = 'edit'
     editingUserId.value = user.id
-    Object.assign(initialUser, {}) 
+    Object.keys(initialUser).forEach(key => {
+      delete initialUser[key]
+    })
     showUserForm.value = true
   }
 

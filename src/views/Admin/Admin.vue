@@ -14,8 +14,21 @@ const {
   showRoleForm, roleFormMode, editingRoleId, form,
   handleAddRole, handleEditRole, handleDeleteRole, submitRole,
 
-  zones, status, envios, SendMessages,
+  zones, envios, SendMessages,
 } = useAdmin()
+
+// Map zone level to status text
+const statusMap: Record<number, string> = {
+  1: "excelente",
+  2: "bom",
+  3: "regular",
+  4: "ruim",
+  5: "péssimo"
+}
+
+function getZoneStatus(level: number): string {
+  return statusMap[level] || "regular"
+}
 </script>
 
 <style src="./AdminStyle.css" scoped></style>
@@ -33,7 +46,7 @@ const {
       :key="zone.id"
       :level="zone.level"
       :region="zone.name"
-      :status="status.text"
+      :status="getZoneStatus(zone.level)"
     />
   </div>
 

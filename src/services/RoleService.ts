@@ -2,16 +2,13 @@ import axios, { AxiosError } from "axios";
 
 export interface RolePayload {
   description: string;
-  regionIds: number[];                
+  regionIds: number[];
 }
 
 export interface Role {
   id: number | string;
   description: string;
-  regionIds?: number[] | null;       
-  regionNames?: string[] | null;      
-  regionId?: number | string | null;
-  regionName?: string | null;
+  regions: Array<{id: number, name: string}>;
 }
 
 const api = axios.create({
@@ -20,14 +17,8 @@ const api = axios.create({
 });
 
 function parseError(e: unknown): never {
-  const err = e as AxiosError<any>;
+  const err = e as AxiosError<{message?: string}>;
   throw new Error(err.response?.data?.message || err.message || "Erro inesperado");
-}
-
-function toNumberArray(v: unknown): number[] {
-  if (Array.isArray(v)) return v.map(Number).filter(n => Number.isFinite(n));
-  if (v == null || v === "") return [];
-  return [Number(v)].filter(n => Number.isFinite(n));
 }
 
 class RoleService {
@@ -35,7 +26,7 @@ class RoleService {
     try {
       const body = {
         description: payload.description,
-        regionId: 1,
+        regionIds: payload.regionIds,
       };
       const { data } = await api.post("/roles", body);
       return data;
@@ -60,7 +51,7 @@ class RoleService {
     try {
       const body = {
         description: payload.description,
-        regionId: 1, 
+        regionIds: payload.regionIds,
       };
       const { data } = await api.put(`/roles/${id}`, body);
       return data;
