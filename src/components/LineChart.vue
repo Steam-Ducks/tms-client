@@ -1,11 +1,11 @@
 <template>
-  <Line :data="chartData" :options="chartOptions" />
+  <Line :data="chartData" :options="chartOptions" :key="chartKey" />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, watch, ref } from 'vue';
 import type { PropType } from 'vue';
-import { Line } from 'vue-chartjs'; // Usa 'Line'
+import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
   Title,
@@ -61,9 +61,9 @@ export default defineComponent({
           y: {
             beginAtZero: true,
             title: {
-                display: true,
-                text: 'Velocidade Média (km/h)',
-                color: '#F8F8F8',
+              display: true,
+              text: 'Velocidade Média (km/h)',
+              color: '#F8F8F8',
             },
             ticks: {
               color: '#F8F8F8',
@@ -76,21 +76,30 @@ export default defineComponent({
           },
           x: {
             title: {
-                display: true,
-                text: 'Hora do Dia',
-                color: '#F8F8F8',
+              display: true,
+              text: 'Hora do Dia',
+              color: '#F8F8F8',
             },
             ticks: { color: '#F8F8F8' },
             grid: { display: false }
           }
         },
         elements: {
-            line: { tension: 0.3, borderWidth: 3 },
-            point: { radius: 4 }
+          line: { tension: 0.3, borderWidth: 3 },
+          point: { radius: 4 }
         }
       }),
     },
   },
+  setup(props) {
+    const chartKey = ref(0);
+
+    // Força re-render quando os dados mudarem
+    watch(() => props.chartData, () => {
+      chartKey.value++;
+    }, { deep: true });
+
+    return { chartKey };
+  }
 });
 </script>
-

@@ -36,6 +36,32 @@ export function useDashboard() {
     }
   }
 
+  const updateHourlySpeedChart = async () => {
+    try {
+      const hoursLabels = Array.from({ length: 24 }, (_, i) => i);
+
+      const hourlyIndicatorsRaw = await IndicatorService.getHourlyIndicators();
+
+      const speedData = hourlyIndicatorsRaw
+        .filter(i => i.indicatorName === "Average Speed");
+
+      const hourlyAverages = hoursLabels.map(hour => {
+        const items = speedData.filter(i => i.hour === hour);
+        if (items.length === 0) return 0;
+
+        const avg = items.reduce((sum, i) => sum + i.averageValue, 0) / items.length;
+        return Math.round(avg * 100) / 100;
+      });
+
+      hourlySpeedData.datasets[0].data = hourlyAverages
+
+      console.log(hourlyAverages)
+    }
+    catch (err) {
+      console.error("Erro ao atualizar gráfico de média por hora:", err);
+    }
+  }
+
   const updateWeeklySpeedChart = async () => {
     try {
 
@@ -57,7 +83,6 @@ export function useDashboard() {
       const speedData = dailyIndicators
         .filter(i => i.indicatorName === "Average Speed")
         .sort((a, b) => a.day.getTime() - b.day.getTime());
-
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -114,31 +139,30 @@ export function useDashboard() {
     difference: 8,
   };
 
-  const hourlySpeedData = {
+  const hourlySpeedData = reactive({
     labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
     datasets: [
       {
         label: 'Velocidade Média',
-        borderColor: '#1174e6',
-        backgroundColor: 'rgba(17, 116, 230, 0.2)',
+        borderColor: '#F97316',
+        backgroundColor: 'rgba(249, 115, 22, 0.2)',
         fill: true,
-        data: [
-          10, 12, 15, 20, 35, 45, 50, 25, 20, 28, 35, 40,
-          45, 42, 38, 30, 22, 15, 18, 25, 30, 35, 40, 30
-        ],
+        data: [] as number[],
       },
     ],
-  };
+  });
 
   onMounted(async () => {
     await fetchZones()
     await updateCityLevel()
     await updateWeeklySpeedChart()
+    await updateHourlySpeedChart()
 
     intervalId = setInterval(async () => {
       await fetchZones()
       await updateCityLevel()
       await updateWeeklySpeedChart()
+      await updateHourlySpeedChart()
     }, 30000)
   })
 
