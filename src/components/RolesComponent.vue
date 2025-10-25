@@ -64,10 +64,6 @@
                 </div>
                 </div>
             </template>
-
-            <div v-else class="empty">
-                Nenhum usuário encontrado.
-            </div>
         </div>
     </div>
 </template>
@@ -78,8 +74,7 @@
     height: 421px;
     border-radius: 16px;
     background-color: #1d1d1d90;
-    padding-bottom: 20px;
-    
+    padding-bottom: 20px; 
     margin-top: 10%;
   }
 
@@ -111,9 +106,16 @@
     cursor: pointer;
     border: 1px solid transparent;
   }
-  .add-button:hover { background-color: #00bf6366; }
+  .add-button:hover { background-color: #00bf6366; }  
 
-  .body { padding-top: 8px; }
+    .body {
+      padding-top: 8px; 
+      overflow-y: auto;  
+      height: 70%;      
+      width: 95%;  
+      scrollbar-width: thin;
+      scrollbar-color: #4b4b4b transparent;
+    }
 
   .role-card{
     display: flex;
