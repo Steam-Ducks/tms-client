@@ -1,14 +1,22 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed, defineProps, watch, ref } from 'vue';
 
 interface DonutChartProps {
-regionName: string;
-value: number;
-limit: number;
-difference: number;
+  regionName: string;
+  value: number;
+  limit: number;
+  difference: number;
 }
 
 const props = defineProps<DonutChartProps>();
+
+// Key para forçar re-render
+const chartKey = ref(0);
+
+// Watch para detectar mudanças no value
+watch(() => props.value, (newValue) => {
+  chartKey.value++;
+}, { deep: true });
 
 // Raio do círculo
 const radius = 45;
@@ -31,12 +39,12 @@ const progressColor = computed(() => {
   if (props.difference < 0 || props.value > props.limit * 1.1) {
     return '#E15759';
   }
-  return '#1174e6';
+  return '#FCB100';
 });
 </script>
 
 <template>
-  <div class="donut-card-inner">
+  <div class="donut-card-inner" :key="chartKey">
     <h3 class="donut-title">{{ regionName }}</h3>
 
     <div class="donut-chart-wrapper">
@@ -60,7 +68,7 @@ const progressColor = computed(() => {
       </svg>
 
       <div class="donut-label">
-        {{ props.value }}km / {{ props.limit }} km
+        {{ Math.round(percentage) }}%
       </div>
     </div>
   </div>
@@ -73,7 +81,6 @@ const progressColor = computed(() => {
   align-items: center;
   padding: 10px;
 }
-
 
 .donut-title {
   font-family: 'Figtree', sans-serif;
@@ -118,9 +125,9 @@ const progressColor = computed(() => {
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: 'Figtree', sans-serif;
-  font-size: 1.1em;
+  font-size: 3em;
   font-weight: 700;
   color: #e0e0e0;
-  width: 80%;
+  text-align: center;
 }
 </style>

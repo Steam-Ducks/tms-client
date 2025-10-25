@@ -39,7 +39,7 @@
           </div>
 
           <div class="chart-wrapper donut-wrapper">
-            <h3 class="chart-title">Relação Limite x Velocidade Média</h3>
+            <h3 class="chart-title">Taxa de Conformidade</h3>
             <DonutChart
               :region-name="donutChartData.regionName"
               :value="donutChartData.value"

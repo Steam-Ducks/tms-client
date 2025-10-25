@@ -36,6 +36,51 @@ export function useDashboard() {
     }
   }
 
+  const updateComplianceRateChart = async () => {
+    try {
+
+      const dailyIndicatorsRaw = await IndicatorService.getDailyIndicators();
+
+      const dailyIndicators = dailyIndicatorsRaw.map(item => {
+        const date = new Date(item.day);
+
+        const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+
+        return {
+          ...item,
+          day: localDate
+        };
+      });
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+
+      const complianceRateData = dailyIndicators
+        .filter(i => {
+          const itemDate = new Date(i.day);
+          itemDate.setHours(0, 0, 0, 0);
+
+          const isToday = itemDate.getTime() === today.getTime();
+          const isComplianceRate = i.indicatorName === "Compliance Rate";
+
+          return isComplianceRate && isToday;
+        });
+
+      const averageComplianceRate = complianceRateData.length > 0
+        ? Math.round((complianceRateData.reduce((sum, i) => sum + i.averageValue, 0) / complianceRateData.length) * 100) / 100
+        : 0;
+
+      console.log('Gráfico da Taxa de Conformidade atualizado!');
+
+      donutChartData.value = averageComplianceRate * 100
+
+    }
+    catch (err) {
+      console.error("Erro ao atualizar gráfico de Compliance Rate:", err);
+    }
+  }
+
   const updateHourlySpeedChart = async () => {
     try {
       const hoursLabels = Array.from({ length: 24 }, (_, i) => i);
@@ -55,7 +100,7 @@ export function useDashboard() {
 
       hourlySpeedData.datasets[0].data = hourlyAverages
 
-      console.log(hourlyAverages)
+      console.log("Gráfico de velocidade média por hora atualizado!")
     }
     catch (err) {
       console.error("Erro ao atualizar gráfico de média por hora:", err);
@@ -127,17 +172,17 @@ export function useDashboard() {
   const weeklySpeedData = reactive({
     labels: ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'],
     datasets: [
-      { label: 'Semana Anterior', backgroundColor: '#1174e6', data: [] },
-      { label: 'Semana Atual', backgroundColor: '#E15759', data: [] },
+      { label: 'Semana Anterior', backgroundColor: '#D91532', data: [] },
+      { label: 'Semana Atual', backgroundColor: '#00BF63', data: [] },
     ],
   });
 
-  const donutChartData = {
-    regionName: "Avenida 501",
-    value: 92,
+  const donutChartData = reactive({
+    regionName: "Geral",
+    value: 0,
     limit: 100,
-    difference: 8,
-  };
+    difference: 0,
+  });
 
   const hourlySpeedData = reactive({
     labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
@@ -157,12 +202,14 @@ export function useDashboard() {
     await updateCityLevel()
     await updateWeeklySpeedChart()
     await updateHourlySpeedChart()
+    await updateComplianceRateChart()
 
     intervalId = setInterval(async () => {
       await fetchZones()
       await updateCityLevel()
       await updateWeeklySpeedChart()
       await updateHourlySpeedChart()
+      await updateComplianceRateChart()
     }, 30000)
   })
 
