@@ -1,12 +1,25 @@
 <script setup lang="ts">
+  import { ref } from 'vue'
+  import TrafficAlertsSidebar from '@/components/TrafficAlertsSidebar.vue'
+
+  const isSidebarOpen = ref(false)
+  const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
   import { useDashboard } from './DashboardScript'
   const { zones, status, handleRegionClick, MapComponent, CaptionComponent, Card,
-          DoubleBarChart, weeklySpeedData, DonutChart, donutChartData, LineChart, hourlySpeedData } = useDashboard()
+        DoubleBarChart, weeklySpeedData, DonutChart, donutChartData, LineChart, hourlySpeedData, trafficAlerts } = useDashboard()
 </script>
 <style src="./DashboardStyle.css"/>
 <template>
   <div class="demo-page">
     <div class="map-card">
+      <TrafficAlertsSidebar
+      :is-open="isSidebarOpen"
+      @toggle="toggleSidebar"
+      :alerts="trafficAlerts"
+    />
       <MapComponent
         :zone-levels="zones"
         @region-click="handleRegionClick"
