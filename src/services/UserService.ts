@@ -60,8 +60,6 @@ class UserService {
 
   async update(id: string | number, payload: UserPayload): Promise<User> {
     try {
-      // DEBUG: Print id and payload before sending to backend
-      console.debug('[UserService.update] id:', id, 'payload:', JSON.stringify(payload));
       const body: Partial<UserPayload> = {
         username: payload.username,
         email: payload.email,
