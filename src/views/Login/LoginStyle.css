@@ -1,40 +1,163 @@
+/* ====== Layout base ====== */
+.login-page {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('/src/bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* ====== Card principal ====== */
 .about {
+  background: rgba(0, 0, 0, 0.45); /* transparência */
+  backdrop-filter: blur(15px); /* desfoque */
+  -webkit-backdrop-filter: blur(15px); /* suporte pra Safari */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  width: 410px;
+  padding: 53px;
+  border-radius: 50px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background-color: white;
-  width: 400px;
-  height: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease-in-out;
 }
 
-.about h1 {
-  margin-bottom: 30px;
-  font-size: 26px;
+
+.logo-top {
+  width: 160px;
+  margin-bottom: 25px;
+}
+
+/* ====== Inputs e labels ====== */
+.about label {
+  font-size: 14px;
+  display: block;
+  margin-bottom: 4px;
+  color: #ddd;
 }
 
 .about input {
-  margin: 5px 0;
-  padding: 8px;
-  width: 80%;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  margin-bottom: 12px;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+}
+
+/* Adicione um estado de foco para acessibilidade, como discutimos antes */
+.about input:focus {
+  border-color: #fdb913; /* A cor da borda muda para sua cor principal ao focar */
+  box-shadow: 0 0 0 1px #fdb913; /* Um brilho sutil */
 }
 
 .about button {
-  margin-top: 20px;
-  padding: 10px 20px;
+  margin-top: 30px;
+  padding: 12px;
+  width: 65%;
   border: none;
-  background-color: #1a73e8;
-  color: white;
-  border-radius: 5px;
+  border-radius: 6px;
+  background-color: #fdb913;
+  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: 0.3s;
 }
 
 .about button:hover {
-  background-color: #1669c1;
+  background-color: #ffcb2f;
 }
+
+/* ====== Texto e rodapé ====== */
+.support-text {
+  font-size: 12px;
+  text-align: center;
+  margin-top: 15px;
+  color: #ccc;
+  line-height: 1.4;
+}
+
+.logos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.logos img {
+  height: 35px;
+}
+
+/* ====== Responsividade ====== */
+
+/* Tablets (até 768px) */
+@media (max-width: 768px) {
+  .about {
+    width: 320px;
+    padding: 25px;
+  }
+
+  .logo-top {
+    width: 140px;
+  }
+
+  .about input {
+    font-size: 13px;
+  }
+
+  .about button {
+    padding: 10px;
+  }
+}
+
+/* Celulares pequenos (até 480px) */
+@media (max-width: 480px) {
+  .login-page {
+    padding: 10px;
+  }
+
+  .about {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+.error-msg {
+  color: #ff4d4d;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 12px;
+  opacity: 0;
+  transform: translateY(-5px);
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* efeito de "shake" no bloco de login */
+.shake {
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
