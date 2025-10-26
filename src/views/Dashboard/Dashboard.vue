@@ -1,18 +1,9 @@
-<!-- Dashboard.vue -->
 <script setup lang="ts">
-  import MapComponent from '@/components/MapComponent.vue'
-  import CaptionComponent from '@/components/CaptionComponent.vue'
-  import Card from '@/components/CardComponent.vue'
-  import { useDashboard } from './DashboardScript.ts'
-  import './DashboardStyle.css'
-  const { zones, status } = useDashboard()
-
-  const handleRegionClick = (regionId: string) => {
-    console.log('Region clicked:', regionId)
-  }
-
+  import { useDashboard } from './DashboardScript'
+  const { zones, status, handleRegionClick, MapComponent, CaptionComponent, Card,
+          DoubleBarChart, weeklySpeedData, DonutChart, donutChartData, LineChart, hourlySpeedData } = useDashboard()
 </script>
-
+<style src="./DashboardStyle.css"/>
 <template>
   <div class="demo-page">
     <div class="map-card">
@@ -38,6 +29,31 @@
           :region="zone.name"
         />
       </div>
+
+      <div class="charts-area">
+          <div class="chart-wrapper">
+            <h3 class="chart-title">Velocidade Média Semanal</h3>
+              <DoubleBarChart
+                  :chart-data="weeklySpeedData"
+              />
+          </div>
+
+          <div class="chart-wrapper donut-wrapper">
+            <h3 class="chart-title">Taxa de Conformidade</h3>
+            <DonutChart
+              :region-name="donutChartData.regionName"
+              :value="donutChartData.value"
+              :limit="donutChartData.limit"
+              :difference="donutChartData.difference"
+            />
+          </div>
+      </div>
+      <div class="charts-area line-chart-area">
+          <div class="chart-wrapper line-chart-wrapper">
+            <h3 class="chart-title">Desempenho Diário por Hora</h3>
+              <LineChart :chart-data="hourlySpeedData" />
+          </div>
+      </div>
     </div>
-  </div>
+</div>
 </template>

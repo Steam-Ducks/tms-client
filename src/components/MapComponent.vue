@@ -19,6 +19,16 @@ interface ZoneLevel {
   id: string
   name: string
   level: number
+  cameras: Camera[]
+}
+
+interface Camera {
+  id: string
+  address: string
+  latitude: number
+  longitude: number
+  averageSpeed: number
+  maxSpeed: number
 }
 
 interface Props {
@@ -46,6 +56,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const regions = ref<MapRegion[]>([])
 const isLoading = ref(true)
+const selectedRegionId = ref<string | null>(null)
+const isAnimating = ref(false)
 
 
 const loadRegionsData = async () => {
@@ -73,6 +85,7 @@ const loadRegionsData = async () => {
 const mapContainer = ref<HTMLElement>()
 let map: L.Map | null = null
 let geoJsonLayer: L.GeoJSON | null = null
+let cameraMarkersLayer: L.LayerGroup | null = null
 
 const getColorForLevel = (level: number): string => {
   const { colors } = props.levelConfig
@@ -93,26 +106,86 @@ const getFeatureStyle = (feature?: GeoJSON.Feature): L.PathOptions => {
 
   const region = regions.value.find(r => r.id === feature.properties?.id)
   const level = region?.level || 0
+  const isSelected = selectedRegionId.value === feature.properties?.id
 
   return {
     fillColor: getColorForLevel(level),
     weight: 1.5,
     opacity: 0.8,
     color: '#ffffff',
-    fillOpacity: 0.65
+    fillOpacity: isSelected ? 0.1 : 0.65
   }
 }
 
-const createPopupContent = (regionId: string): string => {
-  const region = regions.value.find(r => r.id === regionId)
-  if (!region) return 'Unknown region'
-
+const createCameraPopup = (camera: Camera): string => {
   return `
-    <div style="background: rgba(30, 30, 30, 0.95); color: #ffffff; padding: 8px; border-radius: 6px; backdrop-filter: blur(10px);">
-      <h3 style="margin: 0 0 8px 0; color: #ffffff; font-size: 14px;">${region.name}</h3>
-      <p style="margin: 4px 0; font-size: 12px;"><strong>Nível:</strong> ${region.level}</p>
+    <div style="background: rgba(30, 30, 30, 0.95); color: #ffffff; padding: 8px; border-radius: 6px; backdrop-filter: blur(10px); max-width: 200px;">
+      <h4 style="margin: 0 0 8px 0; color: #ffffff; font-size: 12px;">📍 ${camera.address}</h4>
+      <p style="margin: 4px 0; font-size: 11px;"><strong>Velocidade média:</strong> ${camera.averageSpeed} km/h</p>
+      <p style="margin: 4px 0; font-size: 11px;"><strong>Velocidade máxima:</strong> ${camera.maxSpeed} km/h</p>
     </div>
   `
+}
+
+const showCamerasForRegion = (regionId: string) => {
+  if (!map) return
+
+  if (cameraMarkersLayer) {
+    map.removeLayer(cameraMarkersLayer)
+  }
+
+  const selectedZone = props.zoneLevels.find(zone => zone.id === regionId)
+  if (!selectedZone || !selectedZone.cameras) return
+
+  cameraMarkersLayer = L.layerGroup()
+
+  selectedZone.cameras.forEach(camera => {
+    const cameraIcon = L.divIcon({
+      html: `<div style="
+        background: #3b82f6;
+        border: 2px solid white;
+        border-radius: 50%;
+        width: 12px;
+        height: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      "></div>`,
+      className: 'camera-marker',
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    })
+
+    const marker = L.marker([camera.latitude, camera.longitude], {
+      icon: cameraIcon
+    })
+
+    const popup = L.popup({
+      closeButton: false,
+      autoClose: false,
+      closeOnEscapeKey: false,
+      autoPan: false,
+      offset: [0, -6]
+    }).setContent(createCameraPopup(camera))
+
+    marker.on({
+      mouseover: () => {
+        popup.setLatLng([camera.latitude, camera.longitude]).openOn(map!)
+      },
+      mouseout: () => {
+        map!.closePopup(popup)
+      }
+    })
+
+    cameraMarkersLayer!.addLayer(marker)
+  })
+
+  cameraMarkersLayer.addTo(map)
+}
+
+const hideCameras = () => {
+  if (map && cameraMarkersLayer) {
+    map.removeLayer(cameraMarkersLayer)
+    cameraMarkersLayer = null
+  }
 }
 
 const initMap = async () => {
@@ -120,7 +193,6 @@ const initMap = async () => {
 
   if (!mapContainer.value) return
 
-  // desativar interações com o mapa (zoom, scroll, drag)
   map = L.map(mapContainer.value, {
     center: props.center,
     zoom: props.zoom,
@@ -134,6 +206,45 @@ const initMap = async () => {
     attributionControl: false
   })
   map.setView([props.center[0] + 0.03, props.center[1]], 11)
+
+  map.on('dblclick', () => {
+    // Block clicks during animation
+    if (isAnimating.value) return
+
+    isAnimating.value = true
+    selectedRegionId.value = null
+    hideCameras()  // Hide cameras when zooming out
+    map!.flyTo([props.center[0] + 0.03, props.center[1]], 11, {
+      animate: true,
+      duration: 1.0
+    })
+
+    setTimeout(() => {
+      isAnimating.value = false
+    }, 1000)
+
+    updateRegions()
+  })
+
+  map.on('click', () => {
+    if (isAnimating.value) return
+
+    if (selectedRegionId.value !== null) {
+      isAnimating.value = true
+      selectedRegionId.value = null
+      hideCameras()
+      map!.flyTo([props.center[0] + 0.03, props.center[1]], 11, {
+        animate: true,
+        duration: 1.0
+      })
+
+      setTimeout(() => {
+        isAnimating.value = false
+      }, 1000)
+
+      updateRegions()
+    }
+  })
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: 'lucas mapas',
@@ -168,23 +279,41 @@ const updateRegions = () => {
     style: getFeatureStyle,
     onEachFeature: (feature, layer) => {
       if (feature.properties?.id) {
-        const popup = L.popup({
-          closeButton: false,        // Remove  X
-          autoClose: false,
-          closeOnEscapeKey: false,
-          autoPan: false
-        }).setContent(createPopupContent(feature.properties.id))
-
         layer.on({
           click: (e) => {
-            popup.setLatLng(e.latlng).openOn(map!)
+            if (isAnimating.value) return
+
+            L.DomEvent.stopPropagation(e)
 
             const region = regions.value.find(r => r.id === feature.properties?.id)
             if (region) {
+              isAnimating.value = true
+
+              selectedRegionId.value = region.id
+
+              const geoJsonLayer = layer as L.GeoJSON
+              const bounds = geoJsonLayer.getBounds()
+              const center = bounds.getCenter()
+
+              map!.flyTo([center.lat, center.lng], 12, {
+                animate: true,
+                duration: 1.0
+              })
+
+              setTimeout(() => {
+                isAnimating.value = false
+                // Show cameras after zoom animation completes
+                showCamerasForRegion(region.id)
+              }, 1000)
+
+              updateRegions()
+
               emit('regionClick', region.id)
             }
           },
           mouseover: (e) => {
+            if (selectedRegionId.value !== null) return
+
             const target = e.target
             target.setStyle({
               weight: 2.5,
@@ -193,9 +322,10 @@ const updateRegions = () => {
             })
           },
           mouseout: (e) => {
-            geoJsonLayer?.resetStyle(e.target)
+            if (selectedRegionId.value !== null) return
 
-            map!.closePopup(popup)
+            const target = e.target
+            geoJsonLayer?.resetStyle(target)
           }
         })
       }
