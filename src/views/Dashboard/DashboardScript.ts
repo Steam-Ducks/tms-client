@@ -12,6 +12,7 @@ import LineChart from '@/components/LineChart.vue'
 
 export function useDashboard() {
   const zones = ref<ZoneLevel[]>([])
+  const selectedRegion = ref<string | null>(null)
   const { status, setLevel } = useLevelStatus()
   let intervalId: number | null = null
 
@@ -221,10 +222,12 @@ export function useDashboard() {
 
   const handleRegionClick = (regionId: string) => {
     console.log('Region clicked:', regionId)
+    selectedRegion.value = regionId
   }
 
   return {
     zones,
+    selectedRegion,
     status,
     handleRegionClick,
     // Components

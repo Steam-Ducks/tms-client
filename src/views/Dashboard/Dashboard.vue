@@ -1,7 +1,13 @@
 <script setup lang="ts">
+  import { computed } from 'vue'
   import { useDashboard } from './DashboardScript'
-  const { zones, status, handleRegionClick, MapComponent, CaptionComponent, Card,
+  import WeatherIcon from '../../components/WeatherIcon.vue'
+  const { zones, selectedRegion, status, handleRegionClick, MapComponent, CaptionComponent, Card,
           DoubleBarChart, weeklySpeedData, DonutChart, donutChartData, LineChart, hourlySpeedData } = useDashboard()
+
+  const selectedZone = computed(() => {
+    return selectedRegion.value ? zones.value.find(zone => zone.id === selectedRegion.value) : null
+  })
 </script>
 <style src="./DashboardStyle.css"/>
 <template>
@@ -25,9 +31,18 @@
         <Card
           v-for="zone in zones"
           :key="zone.id"
-          :level="zone.level"
+          :level="zone.level as 1 | 2 | 3 | 4 | 5"
           :region="zone.name"
         />
+      </div>
+
+      <div class="weather-section" v-if="selectedZone">
+        <h2 class="section-title">Condições Meteorológicas - {{ selectedZone.name }}</h2>
+        <div class="weather-display">
+          <div class="weather-card">
+            <WeatherIcon :weather-code="selectedZone.weatherCode" />
+          </div>
+        </div>
       </div>
 
       <div class="charts-area">

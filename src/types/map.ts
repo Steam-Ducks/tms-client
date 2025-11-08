@@ -18,10 +18,20 @@ export interface MapData {
   levelConfig: LevelConfig
 }
 
+export interface Camera {
+  id: string
+  address: string
+  latitude: number
+  longitude: number
+  averageSpeed: number
+}
+
 export interface ZoneLevel {
   id: string
   name: string
   level: number
+  weatherCode: number
+  cameras?: Camera[]
 }
 
 export interface MapProps {
