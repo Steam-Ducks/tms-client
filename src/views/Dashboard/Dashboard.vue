@@ -36,15 +36,6 @@
         />
       </div>
 
-      <div class="weather-section" v-if="selectedZone">
-        <h2 class="section-title">Condições Meteorológicas - {{ selectedZone.name }}</h2>
-        <div class="weather-display">
-          <div class="weather-card">
-            <WeatherIcon :weather-code="selectedZone.weatherCode" />
-          </div>
-        </div>
-      </div>
-
       <div class="charts-area">
           <div class="chart-wrapper">
             <h3 class="chart-title">Velocidade Média Semanal</h3>
@@ -62,12 +53,18 @@
               :difference="donutChartData.difference"
             />
           </div>
-      </div>
-      <div class="charts-area line-chart-area">
+
           <div class="chart-wrapper line-chart-wrapper">
             <h3 class="chart-title">Desempenho Diário por Hora</h3>
               <LineChart :chart-data="hourlySpeedData" />
           </div>
+
+          <div class="weather-wrapper" v-if="selectedZone">
+            <div class="weather-display">
+              <WeatherIcon :weather-code="selectedZone.weatherCode" />
+            </div>
+          </div>
+
       </div>
     </div>
 </div>

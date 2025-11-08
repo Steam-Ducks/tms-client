@@ -20,6 +20,11 @@ export function useDashboard() {
     try {
       const data = await TrafficService.getZoneLevels()
       zones.value = data
+
+      if (!selectedRegion.value && data.some(zone => zone.id === "1")) {
+        selectedRegion.value = "1"
+      }
+
       console.log("Dados atualizados:", data)
     } catch (err) {
       console.error("Erro ao carregar zonas:", err)

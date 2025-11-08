@@ -30,7 +30,7 @@ const videoRef = ref<HTMLVideoElement>()
 
 const playVideo = () => {
   if (videoRef.value) {
-    videoRef.value.currentTime = 0 // Reset to start
+    videoRef.value.currentTime = 0
     videoRef.value.play()
   }
 }
@@ -38,7 +38,7 @@ const playVideo = () => {
 const pauseAndReset = () => {
   if (videoRef.value) {
     videoRef.value.pause()
-    videoRef.value.currentTime = 0 // Back to first frame
+    videoRef.value.currentTime = 0
   }
 }
 
@@ -51,9 +51,8 @@ const resetToFirstFrame = () => {
 const weatherData = computed(() => {
   const now = new Date()
   const hour = now.getHours()
-  const isNightTime = hour < 6 || hour >= 18 // Night between 6 PM and 6 AM
+  const isNightTime = hour < 6 || hour >= 18 // noite =  18:00 - 6:00
 
-  // Weather code mapping to available videos
   const getWeatherData = (code: number) => {
     // Clear sky (0-1) - time-based sun/moon
     if (code >= 0 && code <= 1) {
@@ -156,28 +155,13 @@ const weatherData = computed(() => {
 }
 
 .weather-description {
-  margin-top: 12px;
+  margin-top: 24px;
   color: #e0e0e0;
-  font-size: 14px;
+  font-size: 32px;
   font-weight: 500;
   text-align: center;
   font-family: 'Figtree', sans-serif;
 }
 
-/* Responsive sizing */
-@media (max-width: 768px) {
-  .icon-container {
-    width: 60px;
-    height: 60px;
-  }
 
-  .weather-video {
-    width: 45px;
-    height: 45px;
-  }
-
-  .weather-description {
-    font-size: 12px;
-  }
-}
 </style>
