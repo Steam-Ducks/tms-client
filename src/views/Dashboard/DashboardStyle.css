@@ -115,7 +115,7 @@ body {
 .weather-wrapper .weather-display {
     display: flex;
     justify-content: center;
-    margin: 0 auto;
+    margin: 0;
 }
 
 .charts-area.line-chart-area {
