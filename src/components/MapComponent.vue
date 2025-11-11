@@ -19,7 +19,8 @@ interface ZoneLevel {
   id: string
   name: string
   level: number
-  cameras: Camera[]
+  weatherCode: number
+  cameras?: Camera[]
 }
 
 interface Camera {

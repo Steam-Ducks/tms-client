@@ -12,6 +12,7 @@ import LineChart from '@/components/LineChart.vue'
 
 export function useDashboard() {
   const zones = ref<ZoneLevel[]>([])
+  const selectedRegion = ref<string | null>(null)
   const { status, setLevel } = useLevelStatus()
   let intervalId: number | null = null
 
@@ -19,6 +20,11 @@ export function useDashboard() {
     try {
       const data = await TrafficService.getZoneLevels()
       zones.value = data
+
+      if (!selectedRegion.value && data.some(zone => zone.id === "1")) {
+        selectedRegion.value = "1"
+      }
+
       console.log("Dados atualizados:", data)
     } catch (err) {
       console.error("Erro ao carregar zonas:", err)
@@ -221,10 +227,12 @@ export function useDashboard() {
 
   const handleRegionClick = (regionId: string) => {
     console.log('Region clicked:', regionId)
+    selectedRegion.value = regionId
   }
 
   return {
     zones,
+    selectedRegion,
     status,
     handleRegionClick,
     // Components

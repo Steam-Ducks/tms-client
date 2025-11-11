@@ -1,7 +1,13 @@
 <script setup lang="ts">
+  import { computed } from 'vue'
   import { useDashboard } from './DashboardScript'
-  const { zones, status, handleRegionClick, MapComponent, CaptionComponent, Card,
+  import WeatherIcon from '../../components/WeatherIcon.vue'
+  const { zones, selectedRegion, status, handleRegionClick, MapComponent, CaptionComponent, Card,
           DoubleBarChart, weeklySpeedData, DonutChart, donutChartData, LineChart, hourlySpeedData } = useDashboard()
+
+  const selectedZone = computed(() => {
+    return selectedRegion.value ? zones.value.find(zone => zone.id === selectedRegion.value) : null
+  })
 </script>
 <style src="./DashboardStyle.css"/>
 <template>
@@ -25,7 +31,7 @@
         <Card
           v-for="zone in zones"
           :key="zone.id"
-          :level="zone.level"
+          :level="zone.level as 1 | 2 | 3 | 4 | 5"
           :region="zone.name"
         />
       </div>
@@ -47,12 +53,18 @@
               :difference="donutChartData.difference"
             />
           </div>
-      </div>
-      <div class="charts-area line-chart-area">
+
           <div class="chart-wrapper line-chart-wrapper">
             <h3 class="chart-title">Desempenho Diário por Hora</h3>
               <LineChart :chart-data="hourlySpeedData" />
           </div>
+
+          <div class="weather-wrapper" v-if="selectedZone">
+            <div class="weather-display">
+              <WeatherIcon :weather-code="selectedZone.weatherCode" />
+            </div>
+          </div>
+
       </div>
     </div>
 </div>
