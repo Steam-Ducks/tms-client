@@ -31,7 +31,7 @@
 
 <style scoped>
   .card {
-    width: 230px;
+    width: 220px;
     height: 90px;
     border-radius: 16px;
     font-weight: bold;

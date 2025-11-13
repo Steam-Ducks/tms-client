@@ -7,6 +7,7 @@
 }
 .logo{
     width: 150px;
+    cursor: pointer;
 }
 .mesage-button{
     background-color: #00BF634D;
