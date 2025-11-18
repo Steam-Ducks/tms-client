@@ -12,8 +12,8 @@ const props = defineProps<{ rows: MessageRow[] }>();
 
 function statusClass(status: string) {
   switch (status) {
-    case "Entregue": return "status status--ok";
-    case "Não Entregue": return "status status--err";
+    case "Resolvido": return "status status--ok";
+    case "Não Resolvido": return "status status--err";
     default: return "status";
   }
 }
@@ -29,9 +29,9 @@ function statusClass(status: string) {
         <thead>
           <tr>
             <th>Destinatário</th>
-            <th>Remetente</th>
+            <th></th>
             <th>Região</th>
-            <th>Tipo de Aviso</th>
+            <th></th>
             <th>Data de envio</th>
             <th>Status</th>
           </tr>
