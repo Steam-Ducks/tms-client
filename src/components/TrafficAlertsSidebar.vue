@@ -3,7 +3,7 @@
 
     <div class="alert-icon-wrapper">
       <button class="alert-icon" @click="emit('toggle')" v-if="!isOpen">
-        <span>!</span>
+        <span style="font-size: 200%;">!</span>
       </button>
     </div>
 
@@ -16,7 +16,7 @@
 
         <div class="sidebar-content">
           <div
-            v-for="alert in props.alerts"
+            v-for="alert in formattedAlerts"
             :key="alert.id"
             class="notification-card"
             :class="alert.level"
@@ -26,7 +26,12 @@
             <small>{{ alert.time }}</small>
           </div>
 
-          <p v-if="props.alerts.length === 0">Nenhum alerta crítico no momento.</p>
+          <p v-if="formattedAlerts.length === 0 && !loading">
+            Nenhum alerta crítico no momento.
+          </p>
+
+          <p v-if="loading">Carregando alertas...</p>
+          <p v-if="error" class="error-message">{{ error }}</p>
         </div>
       </aside>
     </transition>
@@ -35,8 +40,21 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted, watch } from 'vue';
+
+interface WorstStreetByRegionDTO {
+  regionId: string;
+  regionName: string;
+  regionLevel: number;
+  streetId: string;
+  streetAddress: string;
+  avgSpeed: number;
+  speedLimit: number;
+  severity: number;
+}
+
 interface TrafficAlert {
-  id: number | string;
+  id: string;
   region: string;
   street: string;
   statusText: string;
@@ -46,10 +64,80 @@ interface TrafficAlert {
 
 interface Props {
   isOpen: boolean;
-  alerts: TrafficAlert[];
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['toggle']);
+
+// Estados reativos
+const worstStreets = ref<WorstStreetByRegionDTO[]>([]);
+const loading = ref(false);
+const error = ref('');
+
+// Função para buscar dados da API
+const fetchWorstStreets = async () => {
+  loading.value = true;
+  error.value = '';
+
+  try {
+    const response = await fetch('http://localhost:8080/api/streets/worst');
+
+    if (!response.ok) {
+      throw new Error(`Erro na requisição: ${response.status}`);
+    }
+
+    const data = await response.json();
+    worstStreets.value = data;
+  } catch (err) {
+    console.error('Erro ao buscar alertas:', err);
+    error.value = 'Erro ao carregar alertas de tráfego';
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Função para determinar o nível baseado na severidade
+const getSeverityLevel = (severity: number): string => {
+  if (severity >= 50) return 'pessimo';
+  if (severity >= 35) return 'ruim';
+  if (severity >= 20) return 'regular';
+  if (severity >= 10) return 'bom';
+  return 'excelente';
+};
+
+// Função para gerar texto de status baseado na severidade
+const getStatusText = (severity: number, avgSpeed: number, speedLimit: number): string => {
+  if (severity >= 50) return 'Tráfego Parado';
+  if (severity >= 35) return 'Tráfego Muito Lento';
+  if (severity >= 20) return 'Tráfego Lento';
+  if (severity >= 10) return 'Tráfego ';
+  return 'Tráfego Fluindo ';
+};
+
+// Função para formatar o endereço (remover informações desnecessárias)
+const formatStreetAddress = (address: string): string => {
+  // Remove a cidade e estado do final
+  return address.split(',')[0].trim();
+};
+
+// Computed property para formatar os dados da API
+const formattedAlerts = computed((): TrafficAlert[] => {
+  return worstStreets.value.map(street => ({
+    id: street.streetId,
+    region: street.regionName,
+    street: formatStreetAddress(street.streetAddress),
+    statusText: getStatusText(street.severity, street.avgSpeed, street.speedLimit),
+    time: `Velocidade: ${street.avgSpeed.toFixed(1)}km/h (Limite: ${street.speedLimit}km/h)`,
+    level: getSeverityLevel(street.severity)
+  }));
+});
+
+// Buscar dados quando o componente for montado
+onMounted(() => {
+  fetchWorstStreets();
+});
+
+// Opcional: buscar dados automaticamente a cada X tempo
+// setInterval(fetchWorstStreets, 30000); // Atualizar a cada 30 segundos
 </script>
 
 <style scoped>
@@ -70,10 +158,24 @@ const emit = defineEmits(['toggle']);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 20px;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  position: relative;
+  padding: 0;
+}
+
+.exclamation {
+  font-weight: bold;
+  font-size: 50px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  margin-top: -2px;
 }
 
 .sidebar {
@@ -158,6 +260,12 @@ const emit = defineEmits(['toggle']);
 .notification-card.regular { border-color: #fd7e14; }
 .notification-card.ruim { border-color: #dc3545; }
 .notification-card.pessimo { border-color: #7b1fa2; }
+
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  padding: 10px;
+}
 
 /* Transições */
 .slide-fade-enter-from,
