@@ -26,7 +26,7 @@ const getBackendRegionName = (frontendName: string) => {
     'Zona Leste': 'Zona LESTE',
     'Zona Oeste': 'Zona OESTE',
     'Zona Sudeste': 'Zona SUDESTE',
-    'Centro': 'CENTRO'
+    'Zona Central': 'CENTRO'
   }
 
   return regionMapping[frontendName] || frontendName.toUpperCase()
@@ -45,11 +45,10 @@ const fetchRegionIndicators = async () => {
   try {
     isLoading.value = true
 
-    // Usar o nome normalizado para o backend
     const backendRegionName = getBackendRegionName(props.region)
     console.log('🔄 Nome normalizado para backend:', backendRegionName)
 
-    const url = `http://localhost:8080/indicators/region/${encodeURIComponent(backendRegionName)}/levels`
+    const url = `http://localhost:8080/indicators/region/${encodeURIComponent(backendRegionName)}`
     console.log('🌐 Fazendo request para:', url)
 
     const response = await fetch(url)
