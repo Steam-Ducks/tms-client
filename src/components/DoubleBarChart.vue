@@ -1,9 +1,9 @@
 <template>
-  <Bar :data="chartData" :options="chartOptions" />
+  <Bar :data="chartData" :options="chartOptions" :key="chartKey" />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, watch, ref } from 'vue';
 import type { PropType } from 'vue';
 import { Bar } from 'vue-chartjs';
 import {
@@ -57,7 +57,7 @@ export default defineComponent({
           legend: {
             position: 'top' as const,
             labels: {
-                color: '#F8F8F8',
+              color: '#F8F8F8',
             }
           },
         },
@@ -88,6 +88,14 @@ export default defineComponent({
       }),
     },
   },
+  setup(props) {
+    const chartKey = ref(0);
+
+    watch(() => props.chartData, () => {
+      chartKey.value++;
+    }, { deep: true });
+
+    return { chartKey };
+  }
 });
 </script>
-

@@ -1,6 +1,12 @@
 <template>
   <header class="header">
     <div class="left-section">
+      <div v-if="isAuthenticated">
+        <div class="auth" @click="adminPage">
+          <img :src="adminIcon" class="login-icon" alt="Ícone de Admin" />
+          <span class="login-text">Admin</span>
+        </div>
+      </div>
     </div>
 
     <div class="center-section">
@@ -9,9 +15,8 @@
 
     <div class="right-section">
       <div v-if="isAuthenticated">
-        <span class="auth-button" @click="adminPage">Página do Administrador</span>
         <div class="auth" @click="logout">
-          <img :src="loginIcon" class="login-icon" alt="Ícone de Login" />
+          <img :src="loginIcon" class="login-icon" alt="Ícone de Logout" />
           <span class="login-text">Logout</span>
         </div>
       </div>
@@ -30,6 +35,7 @@
   import { storeToRefs } from "pinia";
   import { usuarioStore } from "@/stores/usuario";
   import loginIcon from "../login-icon.png";
+  import adminIcon from "../admin-icon.png";
 
   const router = useRouter();
   const store = usuarioStore();
