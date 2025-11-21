@@ -3,10 +3,17 @@
 import { computed, ref } from 'vue'
 import { useDashboard } from './DashboardScript'
 import WeatherIcon from '../../components/WeatherIcon.vue'
+import TrafficAlertsSidebar from '@/components/TrafficAlertsSidebar.vue'
 
 const { zones, selectedRegion, status, handleRegionClick, MapComponent, CaptionComponent, Card,
-        DoubleBarChart, weeklySpeedData, DonutChart, donutChartData, LineChart, hourlySpeedData } = useDashboard()
+        DoubleBarChart, weeklySpeedData, DonutChart, donutChartData, LineChart, hourlySpeedData, trafficAlerts } = useDashboard()
 
+const isSidebarOpen = ref(false)
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
+  
 const selectedZone = computed(() => {
   return selectedRegion.value ? zones.value.find(zone => zone.id === selectedRegion.value) : null
 })
@@ -24,6 +31,11 @@ const handleCardExpand = (region: string) => {
 <template>
   <div class="demo-page">
     <div class="map-card">
+      <TrafficAlertsSidebar
+      :is-open="isSidebarOpen"
+      @toggle="toggleSidebar"
+      :alerts="trafficAlerts"
+    />
       <MapComponent
         :zone-levels="zones"
         @region-click="handleRegionClick"

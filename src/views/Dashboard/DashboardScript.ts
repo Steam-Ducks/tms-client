@@ -10,39 +10,98 @@ import DoubleBarChart from '@/components/DoubleBarChart.vue'
 import DonutChart from '@/components/DonutChart.vue'
 import LineChart from '@/components/LineChart.vue'
 
-export function useDashboard() {
-  const zones = ref<ZoneLevel[]>([])
-  const selectedRegion = ref<string | null>(null)
-  const { status, setLevel } = useLevelStatus()
-  let intervalId: number | null = null
+// 1. DEFINIÇÃO DA INTERFACE DOS DADOS DE ALERTA
+export interface TrafficAlert {
+  id: number;
+  region: string;
+  street: string;
+  statusText: string;
+  level: 'ruim' | 'pessimo' | 'regular' | 'bom' | 'excelente';
+  time: string;
+}
 
-  const fetchZones = async () => {
-    try {
-      const data = await TrafficService.getZoneLevels()
-      zones.value = data
+
+export function useDashboard() {
+  const zones = ref<ZoneLevel[]>([])
+  const selectedRegion = ref<string | null>(null)
+  const { status, setLevel } = useLevelStatus()
+  let intervalId: number | null = null
+
+  //ESTADO REATIVO PARA OS ALERTAS (Simulação do top dos top 5)
+  const trafficAlerts = ref<TrafficAlert[]>([
+    {
+      id: 1,
+      region: "Região Centro",
+      street: "Av. Principal",
+      statusText: "Tráfego PÉSSIMO devido a incidente.",
+      level: 'pessimo',
+      time: "Atualizado: 17:20"
+    },
+    {
+      id: 2,
+      region: "Região Oeste",
+      street: "Rua das Laranjeiras",
+      statusText: "Trânsito RUIM em 70% da via.",
+      level: 'ruim',
+      time: "Atualizado: 17:15"
+    },
+    {
+      id: 3,
+      region: "Região Sul",
+      street: "Rodovia Z",
+      statusText: "Fluxo regular, aumento de lentidão.",
+      level: 'regular',
+      time: "Atualizado: 17:10"
+    },
+    {
+      id: 4,
+      region: "Região Leste",
+      street: "Av. do Parque",
+      statusText: "Trânsito bom, leve lentidão em um trecho.",
+      level: 'bom',
+      time: "Atualizado: 17:05"
+    },
+    {
+      id: 5,
+      region: "Região Norte",
+      street: "Rua da Serra",
+      statusText: "Tráfego excelente, sem ocorrências.",
+      level: 'excelente',
+      time: "Atualizado: 17:00"
+    },
+  ]);
+
+  const fetchZones = async () => {
+    try {
+      const data = await TrafficService.getZoneLevels()
+      zones.value = data
 
       if (!selectedRegion.value && data.some(zone => zone.id === "1")) {
         selectedRegion.value = "1"
       }
 
-      console.log("Dados atualizados:", data)
-    } catch (err) {
-      console.error("Erro ao carregar zonas:", err)
-    }
+      console.log("Dados atualizados:", data)
+    } catch (err) {
+      console.error("Erro ao carregar zonas:", err)
+    }
+  }
+
+  const updateCityLevel = async () => {
+    try {
+      const cityLevel = await TrafficService.getCityLevel()
+      const validLevel = Math.max(1, Math.min(5, cityLevel)) as 1 | 2 | 3 | 4 | 5
+      setLevel(validLevel)
+    } catch (err) {
+      console.error("Erro ao carregar nível da cidade:", err)
+      setLevel(3)
+    }
+  }
+
+  const fetchAlerts = async () => {
+    console.log("Alertas de tráfego prontos para atualização.");
   }
 
-  const updateCityLevel = async () => {
-    try {
-      const cityLevel = await TrafficService.getCityLevel()
-      const validLevel = Math.max(1, Math.min(5, cityLevel)) as 1 | 2 | 3 | 4 | 5
-      setLevel(validLevel)
-    } catch (err) {
-      console.error("Erro ao carregar nível da cidade:", err)
-      setLevel(3)
-    }
-  }
-
-  const updateComplianceRateChart = async () => {
+  const updateComplianceRateChart = async () => {
     try {
 
       const dailyIndicatorsRaw = await IndicatorService.getDailyIndicators();
@@ -176,32 +235,37 @@ export function useDashboard() {
   }
 
   const weeklySpeedData = reactive({
-    labels: ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'],
-    datasets: [
-      { label: 'Semana Anterior', backgroundColor: '#D91532', data: [] },
-      { label: 'Semana Atual', backgroundColor: '#00BF63', data: [] },
-    ],
+    labels: ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'],
+    datasets: [
+      { label: 'Semana Anterior', backgroundColor: '#D91532', data: [] },
+      { label: 'Semana Atual', backgroundColor: '#00BF63', data: [] },
+    ],
   });
 
-  const donutChartData = reactive({
-    regionName: "Geral",
-    value: 0,
-    limit: 100,
-    difference: 0,
-  });
 
-  const hourlySpeedData = reactive({
-    labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
-    datasets: [
-      {
-        label: 'Velocidade Média',
-        borderColor: '#F97316',
-        backgroundColor: 'rgba(249, 115, 22, 0.2)',
-        fill: true,
-        data: [] as number[],
-      },
-    ],
-  });
+  const donutChartData = {
+      regionName: "Avenida 501",
+      value: 92,
+      limit: 100,
+      difference: 8,
+};
+
+    const hourlySpeedData = {
+      labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
+      datasets: [
+          {
+              label: 'Velocidade Média',
+              borderColor: '#1174e6',
+              backgroundColor: 'rgba(17, 116, 230, 0.2)',
+              fill: true,
+              data: [
+                  10, 12, 15, 20, 35, 45, 50, 25, 20, 28, 35, 40,
+                  45, 42, 38, 30, 22, 15, 18, 25, 30, 35, 40, 30
+              ],
+          },
+      ],
+  };
+
 
   onMounted(async () => {
     await fetchZones()
@@ -210,20 +274,21 @@ export function useDashboard() {
     await updateHourlySpeedChart()
     await updateComplianceRateChart()
 
-    intervalId = setInterval(async () => {
-      await fetchZones()
-      await updateCityLevel()
+    intervalId = setInterval(async () => {
+      await fetchZones()
+      await updateCityLevel()
       await updateWeeklySpeedChart()
       await updateHourlySpeedChart()
       await updateComplianceRateChart()
-    }, 30000)
-  })
+      await fetchAlerts() // CHAME A FUNÇÃO NO INTERVALO
+    }, 30000)
+  })
 
-  onUnmounted(() => {
-    if (intervalId) {
-      clearInterval(intervalId)
-    }
-  })
+  onUnmounted(() => {
+    if (intervalId) {
+      clearInterval(intervalId)
+    }
+  })
 
   const handleRegionClick = (regionId: string) => {
     console.log('Region clicked:', regionId)
@@ -236,14 +301,15 @@ export function useDashboard() {
     status,
     handleRegionClick,
     // Components
-    MapComponent,
-    CaptionComponent,
-    Card,
-    DoubleBarChart,
-    weeklySpeedData,
-    DonutChart,
-    donutChartData,
-    LineChart,
-    hourlySpeedData,
-  }
+    MapComponent,
+    CaptionComponent,
+    Card,
+    DoubleBarChart,
+    weeklySpeedData,
+    DonutChart,
+    donutChartData,
+    LineChart,
+    hourlySpeedData,
+    trafficAlerts,
+  }
 }
