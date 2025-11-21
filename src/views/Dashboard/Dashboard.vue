@@ -1,23 +1,33 @@
+<!-- Dashboard.vue -->
 <script setup lang="ts">
-  import { computed } from 'vue'
-  import { ref } from 'vue'
-  import TrafficAlertsSidebar from '@/components/TrafficAlertsSidebar.vue'
+import { computed, ref } from 'vue'
+import { useDashboard } from './DashboardScript'
+import WeatherIcon from '../../components/WeatherIcon.vue'
+import TrafficAlertsSidebar from '@/components/TrafficAlertsSidebar.vue'
 
-  const isSidebarOpen = ref(false)
-  const toggleSidebar = () => {
+const { zones, selectedRegion, status, handleRegionClick, MapComponent, CaptionComponent, Card,
+        DoubleBarChart, weeklySpeedData, DonutChart, donutChartData, LineChart, hourlySpeedData, trafficAlerts } = useDashboard()
+
+const isSidebarOpen = ref(false)
+const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value
 }
 
-  import { useDashboard } from './DashboardScript'
-  import WeatherIcon from '../../components/WeatherIcon.vue'
-  const { zones, selectedRegion, status, handleRegionClick, MapComponent, CaptionComponent, Card,
-        DoubleBarChart, weeklySpeedData, DonutChart, donutChartData, LineChart, hourlySpeedData, trafficAlerts } = useDashboard()
+  
+const selectedZone = computed(() => {
+  return selectedRegion.value ? zones.value.find(zone => zone.id === selectedRegion.value) : null
+})
 
-  const selectedZone = computed(() => {
-    return selectedRegion.value ? zones.value.find(zone => zone.id === selectedRegion.value) : null
-  })
+// Controlar qual card está expandido
+const expandedRegion = ref<string | null>(null)
+
+const handleCardExpand = (region: string) => {
+  expandedRegion.value = expandedRegion.value === region ? null : region
+}
 </script>
+
 <style src="./DashboardStyle.css"/>
+
 <template>
   <div class="demo-page">
     <div class="map-card">
@@ -46,6 +56,7 @@
           :key="zone.id"
           :level="zone.level as 1 | 2 | 3 | 4 | 5"
           :region="zone.name"
+          @expand="handleCardExpand"
         />
       </div>
 
@@ -77,8 +88,7 @@
               <WeatherIcon :weather-code="selectedZone.weatherCode" />
             </div>
           </div>
-
       </div>
     </div>
-</div>
+  </div>
 </template>
