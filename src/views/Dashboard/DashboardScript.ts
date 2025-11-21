@@ -22,10 +22,10 @@ export interface TrafficAlert {
 
 
 export function useDashboard() {
-  const zones = ref<ZoneLevel[]>([])
+  const zones = ref<ZoneLevel[]>([])
   const selectedRegion = ref<string | null>(null)
-  const { status, setLevel } = useLevelStatus()
-  let intervalId: number | null = null
+  const { status, setLevel } = useLevelStatus()
+  let intervalId: number | null = null
 
   //ESTADO REATIVO PARA OS ALERTAS (Simulação do top dos top 5)
   const trafficAlerts = ref<TrafficAlert[]>([
@@ -71,37 +71,37 @@ export function useDashboard() {
     },
   ]);
 
-  const fetchZones = async () => {
-    try {
-      const data = await TrafficService.getZoneLevels()
-      zones.value = data
+  const fetchZones = async () => {
+    try {
+      const data = await TrafficService.getZoneLevels()
+      zones.value = data
 
       if (!selectedRegion.value && data.some(zone => zone.id === "1")) {
         selectedRegion.value = "1"
       }
 
-      console.log("Dados atualizados:", data)
-    } catch (err) {
-      console.error("Erro ao carregar zonas:", err)
-    }
-  }
+      console.log("Dados atualizados:", data)
+    } catch (err) {
+      console.error("Erro ao carregar zonas:", err)
+    }
+  }
 
-  const updateCityLevel = async () => {
-    try {
-      const cityLevel = await TrafficService.getCityLevel()
-      const validLevel = Math.max(1, Math.min(5, cityLevel)) as 1 | 2 | 3 | 4 | 5
-      setLevel(validLevel)
-    } catch (err) {
-      console.error("Erro ao carregar nível da cidade:", err)
-      setLevel(3)
-    }
-  }
+  const updateCityLevel = async () => {
+    try {
+      const cityLevel = await TrafficService.getCityLevel()
+      const validLevel = Math.max(1, Math.min(5, cityLevel)) as 1 | 2 | 3 | 4 | 5
+      setLevel(validLevel)
+    } catch (err) {
+      console.error("Erro ao carregar nível da cidade:", err)
+      setLevel(3)
+    }
+  }
 
   const fetchAlerts = async () => {
     console.log("Alertas de tráfego prontos para atualização.");
   }
 
-  const updateComplianceRateChart = async () => {
+  const updateComplianceRateChart = async () => {
     try {
 
       const dailyIndicatorsRaw = await IndicatorService.getDailyIndicators();
@@ -139,9 +139,9 @@ export function useDashboard() {
       console.log('Gráfico da Taxa de Conformidade atualizado!');
 
       donutChartData.value = averageComplianceRate * 100
+      donutChartData.trend = getTrend("Compliance Rate")
 
-    }
-    catch (err) {
+    } catch (err) {
       console.error("Erro ao atualizar gráfico de Compliance Rate:", err);
     }
   }
@@ -164,10 +164,10 @@ export function useDashboard() {
       });
 
       hourlySpeedData.datasets[0].data = hourlyAverages
+      hourlySpeedData.trend = getTrend("Average Speed");
 
       console.log("Gráfico de velocidade média por hora atualizado!")
-    }
-    catch (err) {
+    } catch (err) {
       console.error("Erro ao atualizar gráfico de média por hora:", err);
     }
   }
@@ -226,6 +226,7 @@ export function useDashboard() {
 
       weeklySpeedData.datasets[0].data = weekData(week1Data);
       weeklySpeedData.datasets[1].data = weekData(week2Data);
+      weeklySpeedData.trend = getTrend("Average Speed");
 
       console.log("Gráfico de Velocidade Média Semanal atualizado!")
 
@@ -234,12 +235,24 @@ export function useDashboard() {
     }
   }
 
+  const getTrend = async (indicatorName) => {
+    const indicatorStatus = ref({});
+
+    indicatorStatus.value = await IndicatorService.getIndicatorsStatus();
+
+    const valor = indicatorStatus.value[indicatorName];
+    console.log(`Tendência para ${indicatorName}: ${valor}`)
+
+    return valor
+  }
+
   const weeklySpeedData = reactive({
     labels: ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'],
     datasets: [
       { label: 'Semana Anterior', backgroundColor: '#D91532', data: [] },
       { label: 'Semana Atual', backgroundColor: '#00BF63', data: [] },
     ],
+    trend: "MANTEVE",
   });
 
 
@@ -248,6 +261,7 @@ export function useDashboard() {
     value: 0,
     limit: 100,
     difference: 0,
+    trend: "MANTEVE",
   });
 
   const hourlySpeedData = reactive({
@@ -261,7 +275,9 @@ export function useDashboard() {
         data: [] as number[],
       },
     ],
+    trend: "MANTEVE",
   });
+
   onMounted(async () => {
     await fetchZones()
     await updateCityLevel()
