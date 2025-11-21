@@ -253,6 +253,13 @@ onMounted(() => {
   border-left: 5px solid transparent;
   border-radius: 6px;
   color: #fff;
+  transition: all 0.3s ease;
+}
+
+.notification-card:hover {
+  background-color: #444;
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .notification-card.excelente { border-color: #28a745; }
