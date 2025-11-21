@@ -243,30 +243,25 @@ export function useDashboard() {
   });
 
 
-  const donutChartData = {
-      regionName: "Avenida 501",
-      value: 92,
-      limit: 100,
-      difference: 8,
-};
+  const donutChartData = reactive({
+    regionName: "Geral",
+    value: 0,
+    limit: 100,
+    difference: 0,
+  });
 
-    const hourlySpeedData = {
-      labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
-      datasets: [
-          {
-              label: 'Velocidade Média',
-              borderColor: '#1174e6',
-              backgroundColor: 'rgba(17, 116, 230, 0.2)',
-              fill: true,
-              data: [
-                  10, 12, 15, 20, 35, 45, 50, 25, 20, 28, 35, 40,
-                  45, 42, 38, 30, 22, 15, 18, 25, 30, 35, 40, 30
-              ],
-          },
-      ],
-  };
-
-
+  const hourlySpeedData = reactive({
+    labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
+    datasets: [
+      {
+        label: 'Velocidade Média',
+        borderColor: '#F97316',
+        backgroundColor: 'rgba(249, 115, 22, 0.2)',
+        fill: true,
+        data: [] as number[],
+      },
+    ],
+  });
   onMounted(async () => {
     await fetchZones()
     await updateCityLevel()
