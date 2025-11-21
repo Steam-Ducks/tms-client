@@ -46,13 +46,10 @@ const fetchRegionIndicators = async () => {
     isLoading.value = true
 
     const backendRegionName = getBackendRegionName(props.region)
-    console.log('🔄 Nome normalizado para backend:', backendRegionName)
 
     const url = `http://localhost:8080/indicators/region/${encodeURIComponent(backendRegionName)}`
-    console.log('🌐 Fazendo request para:', url)
 
     const response = await fetch(url)
-    console.log('✅ Response status:', response.status)
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -62,7 +59,6 @@ const fetchRegionIndicators = async () => {
     console.log('📊 Dados recebidos:', data)
 
     regionIndicators.value = data.indicators || []
-    console.log('📈 Indicadores encontrados:', regionIndicators.value.length)
 
     isExpanded.value = true
     emit('expand', props.region)
@@ -82,6 +78,17 @@ const formatChange = (change: string) => {
     'MANTEVE': '➡️'
   }
   return `${icons[change] || ''} ${change}`
+}
+
+// Traduzir nomes dos indicadores
+const translateIndicatorName = (name: string): string => {
+  const translations: Record<string, string> = {
+    'Average Speed': 'Velocidade Média',
+    'Compliance Rate': 'Taxa de Conformidade',
+    'Traffic Density': 'Densidade de Tráfego',
+    'Weather': 'Clima'
+  }
+  return translations[name] || name
 }
 </script>
 
@@ -117,7 +124,7 @@ const formatChange = (change: string) => {
           class="indicator-item"
         >
           <div class="indicator-header">
-            <span class="indicator-name">{{ indicator.indicatorName }}</span>
+            <span class="indicator-name">{{ translateIndicatorName(indicator.indicatorName) }}</span>
             <span class="indicator-level">Nível {{ indicator.level }}</span>
           </div>
           <div class="indicator-details">
