@@ -27,24 +27,34 @@ export function useAdmin() {
   }
 
   const envios = [
-    { destinatario: "+55 12 98877 6655", remetente: "Giuliano Bertoti", regiao: "Zona Sul", tipoAviso: "Congestionamento", dataEnvio: "19/09/2025 00:00:13", status: "Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },{ destinatario: "+55 12 98877 6655", remetente: "Giuliano Bertoti", regiao: "Zona Sul", tipoAviso: "Congestionamento", dataEnvio: "19/09/2025 00:00:13", status: "Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },{ destinatario: "+55 12 98877 6655", remetente: "Giuliano Bertoti", regiao: "Zona Sul", tipoAviso: "Congestionamento", dataEnvio: "19/09/2025 00:00:13", status: "Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },{ destinatario: "+55 12 98877 6655", remetente: "Giuliano Bertoti", regiao: "Zona Sul", tipoAviso: "Congestionamento", dataEnvio: "19/09/2025 00:00:13", status: "Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },{ destinatario: "+55 12 98877 6655", remetente: "Giuliano Bertoti", regiao: "Zona Sul", tipoAviso: "Congestionamento", dataEnvio: "19/09/2025 00:00:13", status: "Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },{ destinatario: "+55 12 98877 6655", remetente: "Giuliano Bertoti", regiao: "Zona Sul", tipoAviso: "Congestionamento", dataEnvio: "19/09/2025 00:00:13", status: "Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },{ destinatario: "+55 12 98877 6655", remetente: "Giuliano Bertoti", regiao: "Zona Sul", tipoAviso: "Congestionamento", dataEnvio: "19/09/2025 00:00:13", status: "Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },{ destinatario: "+55 12 98877 6655", remetente: "Giuliano Bertoti", regiao: "Zona Sul", tipoAviso: "Congestionamento", dataEnvio: "19/09/2025 00:00:13", status: "Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },{ destinatario: "+55 12 98877 6655", remetente: "Giuliano Bertoti", regiao: "Zona Sul", tipoAviso: "Congestionamento", dataEnvio: "19/09/2025 00:00:13", status: "Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },{ destinatario: "+55 12 98877 6655", remetente: "Giuliano Bertoti", regiao: "Zona Sul", tipoAviso: "Congestionamento", dataEnvio: "19/09/2025 00:00:13", status: "Entregue" },
-    { destinatario: "+55 11 92111 2222", remetente: "Central", regiao: "Zona Norte", tipoAviso: "Obra", dataEnvio: "19/10/2025 01:58:15", status: "Não Entregue" },
-  ]
+  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
+  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+
+  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
+  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+
+  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
+  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+
+  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
+
+  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+
+  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
+  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+
+  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
+
+  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+
+  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
+  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+];
+
 
   return {
     rolesList, loadingRoles, rolesError,
