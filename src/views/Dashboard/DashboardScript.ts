@@ -139,7 +139,7 @@ export function useDashboard() {
       console.log('Gráfico da Taxa de Conformidade atualizado!');
 
       donutChartData.value = averageComplianceRate * 100
-      donutChartData.trend = getTrend("Compliance Rate")
+      donutChartData.trend = await getTrend("Compliance Rate")
 
     } catch (err) {
       console.error("Erro ao atualizar gráfico de Compliance Rate:", err);
@@ -164,7 +164,7 @@ export function useDashboard() {
       });
 
       hourlySpeedData.datasets[0].data = hourlyAverages
-      hourlySpeedData.trend = getTrend("Average Speed");
+      hourlySpeedData.trend = await getTrend("Average Speed");
 
       console.log("Gráfico de velocidade média por hora atualizado!")
     } catch (err) {
@@ -226,7 +226,7 @@ export function useDashboard() {
 
       weeklySpeedData.datasets[0].data = weekData(week1Data);
       weeklySpeedData.datasets[1].data = weekData(week2Data);
-      weeklySpeedData.trend = getTrend("Average Speed");
+      weeklySpeedData.trend = await getTrend("Average Speed");
 
       console.log("Gráfico de Velocidade Média Semanal atualizado!")
 
@@ -235,15 +235,16 @@ export function useDashboard() {
     }
   }
 
-  const getTrend = async (indicatorName) => {
-    const indicatorStatus = ref({});
-
-    indicatorStatus.value = await IndicatorService.getIndicatorsStatus();
-
-    const valor = indicatorStatus.value[indicatorName];
-    console.log(`Tendência para ${indicatorName}: ${valor}`)
-
-    return valor
+  const getTrend = async (indicatorName: string) => {
+    try {
+      const indicatorStatus = await IndicatorService.getIndicatorsStatus();
+      const valor = indicatorStatus[indicatorName];
+      console.log(`Tendência para ${indicatorName}: ${valor}`)
+      return valor || "MANTEVE";
+    } catch (err) {
+      console.error("Erro ao buscar tendência:", err);
+      return "MANTEVE";
+    }
   }
 
   const weeklySpeedData = reactive({

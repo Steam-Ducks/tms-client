@@ -27,14 +27,14 @@ const handleCardExpand = (region: string) => {
 
 const getTrendText = (value) => {
 
-  if (value === "AUMENTOU") {
+  if (value === "MELHOROU") {
     return {
       icon: "/src/assets/trend/trend_up.png",
       text: "A tendência melhorou."
     };
   }
 
-  if (value === "DIMINUIU") {
+  if (value === "PIOROU") {
     return {
       icon: "/src/assets/trend/trend_down.png",
       text: "A tendência piorou."
