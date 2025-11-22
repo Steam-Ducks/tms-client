@@ -69,8 +69,8 @@
 
   .edit-button,
   .delete-button{
-    width: 38px; 
-    height: 38px; 
+    width: 38px;
+    height: 38px;
     padding: 6px 10px;
     border: 1px solid transparent;
     display: flex;
@@ -93,9 +93,9 @@
     padding: 24px 0;
   }
   .body {
-    overflow-y: auto;  
-    height: 70%;      
-    width: 95%;  
+    overflow-y: auto;
+    height: 70%;
+    width: 95%;
     scrollbar-width: thin;
     scrollbar-color: #4b4b4b transparent;
   }

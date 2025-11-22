@@ -4,7 +4,7 @@ import { ref, computed } from 'vue';
 export interface MessageRow {
   id: number;
   status: boolean;
-  ocorrencia: string;
+  ocorrencia: string | null;
   location: string;
   date: string;
   destinatario: string;
@@ -12,12 +12,30 @@ export interface MessageRow {
 
 const props = defineProps<{ rows: MessageRow[] }>();
 const emit = defineEmits<{
-  resolve: [id: number, message: string]
+  resolve: [id: number, occurrence: string]
 }>();
 
 const showResolveModal = ref(false);
 const selectedMessageId = ref<number | null>(null);
-const resolveMessage = ref('');
+const customOccurrence = ref('');
+
+const occurrenceTypes = [
+  'Obra',
+  'Acidente',
+  'Engarrafamento',
+  'Alagamento',
+  'Bloqueio de via',
+  'Manifestação',
+  'Outro'
+];
+
+const selectedOccurrence = ref('');
+const showCustomInput = ref(false);
+
+// Sorting
+type SortKey = 'destinatario' | 'location' | 'date' | 'ocorrencia' | 'status';
+const sortKey = ref<SortKey | null>(null);
+const sortOrder = ref<'asc' | 'desc'>('asc');
 
 // Pagination
 const currentPage = ref(1);
@@ -27,16 +45,59 @@ const totalPages = computed(() =>
   Math.ceil((props.rows?.length || 0) / itemsPerPage.value)
 );
 
+const sortedRows = computed(() => {
+  if (!props.rows) return [];
+  
+  const rows = [...props.rows];
+  
+  if (!sortKey.value) return rows;
+  
+  return rows.sort((a, b) => {
+    const aVal = a[sortKey.value!];
+    const bVal = b[sortKey.value!];
+    
+    // Handle null values
+    if (aVal === null && bVal === null) return 0;
+    if (aVal === null) return sortOrder.value === 'asc' ? 1 : -1;
+    if (bVal === null) return sortOrder.value === 'asc' ? -1 : 1;
+    
+    // Compare values
+    let comparison = 0;
+    if (typeof aVal === 'string' && typeof bVal === 'string') {
+      comparison = aVal.localeCompare(bVal);
+    } else if (typeof aVal === 'boolean' && typeof bVal === 'boolean') {
+      comparison = aVal === bVal ? 0 : aVal ? 1 : -1;
+    } else {
+      comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+    }
+    
+    return sortOrder.value === 'asc' ? comparison : -comparison;
+  });
+});
+
 const paginatedRows = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
-  return props.rows?.slice(start, end) || [];
+  return sortedRows.value.slice(start, end);
 });
 
 function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
   }
+}
+
+function sort(key: SortKey) {
+  if (sortKey.value === key) {
+    // Toggle order if clicking same column
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    // New column, default to ascending
+    sortKey.value = key;
+    sortOrder.value = 'asc';
+  }
+  // Reset to first page when sorting
+  currentPage.value = 1;
 }
 
 function nextPage() {
@@ -62,14 +123,27 @@ function statusText(status: boolean) {
 function handleStatusClick(row: MessageRow) {
   if (!row.status) {
     selectedMessageId.value = row.id;
-    resolveMessage.value = '';
+    customOccurrence.value = '';
+    selectedOccurrence.value = '';
+    showCustomInput.value = false;
     showResolveModal.value = true;
   }
 }
 
+function selectOccurrence(occurrence: string) {
+  selectedOccurrence.value = occurrence;
+  if (occurrence === 'Outro') {
+    showCustomInput.value = true;
+    customOccurrence.value = '';
+  } else {
+    showCustomInput.value = false;
+  }
+}
+
 function confirmResolve() {
-  if (selectedMessageId.value && resolveMessage.value.trim()) {
-    emit('resolve', selectedMessageId.value, resolveMessage.value);
+  const finalOccurrence = showCustomInput.value ? customOccurrence.value : selectedOccurrence.value;
+  if (selectedMessageId.value && finalOccurrence.trim()) {
+    emit('resolve', selectedMessageId.value, finalOccurrence);
     closeModal();
   }
 }
@@ -77,7 +151,9 @@ function confirmResolve() {
 function closeModal() {
   showResolveModal.value = false;
   selectedMessageId.value = null;
-  resolveMessage.value = '';
+  customOccurrence.value = '';
+  selectedOccurrence.value = '';
+  showCustomInput.value = false;
 }
 </script>
 
@@ -90,11 +166,36 @@ function closeModal() {
       <table class="message-table">
         <thead>
           <tr>
-            <th>Destinatário</th>
-            <th>Localização</th>
-            <th>Data</th>
-            <th>Ocorrência</th>
-            <th>Status</th>
+            <th @click="sort('destinatario')" class="sortable">
+              Destinatário
+              <span class="sort-indicator" v-if="sortKey === 'destinatario'">
+                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
+            <th @click="sort('location')" class="sortable">
+              Localização
+              <span class="sort-indicator" v-if="sortKey === 'location'">
+                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
+            <th @click="sort('date')" class="sortable">
+              Data
+              <span class="sort-indicator" v-if="sortKey === 'date'">
+                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
+            <th @click="sort('ocorrencia')" class="sortable">
+              Ocorrência
+              <span class="sort-indicator" v-if="sortKey === 'ocorrencia'">
+                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
+            <th @click="sort('status')" class="sortable">
+              Status
+              <span class="sort-indicator" v-if="sortKey === 'status'">
+                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
           </tr>
         </thead>
 
@@ -159,18 +260,34 @@ function closeModal() {
     <div v-if="showResolveModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal-content">
         <h3>Confirmar Resolução</h3>
-        <p>Descreva brevemente como o problema foi resolvido:</p>
+        <p>Qual foi o tipo de ocorrência?</p>
+        
+        <div class="options-grid">
+          <button
+            v-for="occurrence in occurrenceTypes"
+            :key="occurrence"
+            class="option-btn"
+            :class="{ active: selectedOccurrence === occurrence }"
+            @click="selectOccurrence(occurrence)"
+          >
+            {{ occurrence }}
+          </button>
+        </div>
+
         <textarea
-          v-model="resolveMessage"
-          placeholder="Ex: Congestionamento normalizado após acidente ser removido..."
-          rows="4"
+          v-if="showCustomInput"
+          v-model="customOccurrence"
+          placeholder="Descreva o tipo de ocorrência..."
+          rows="3"
+          class="custom-input"
         ></textarea>
+
         <div class="modal-actions">
           <button class="btn-cancel" @click="closeModal">Cancelar</button>
           <button
             class="btn-confirm"
             @click="confirmResolve"
-            :disabled="!resolveMessage.trim()"
+            :disabled="!selectedOccurrence || (showCustomInput && !customOccurrence.trim())"
           >
             Confirmar Resolução
           </button>
@@ -227,6 +344,22 @@ thead th {
   font-weight: 600;
   padding: 10px 0;
   border-bottom: 1px solid #444;
+}
+
+thead th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+thead th.sortable:hover {
+  color: #00bf63;
+}
+
+.sort-indicator {
+  margin-left: 6px;
+  font-size: 0.8em;
+  color: #00bf63;
 }
 
 tbody td {
@@ -359,6 +492,55 @@ tbody td {
   background: #333;
   color: #666;
   cursor: not-allowed;
+}
+
+/* Resolution Options Grid */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.option-btn {
+  padding: 12px 20px;
+  background: #2a2a2a;
+  border: 2px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.option-btn:hover {
+  background: #3a3a3a;
+  border-color: #00bf63;
+}
+
+.option-btn.active {
+  background: #00bf63;
+  border-color: #00bf63;
+  color: #1a1a1a;
+}
+
+.custom-input {
+  width: 100%;
+  padding: 12px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  margin-top: 12px;
+}
+
+.custom-input:focus {
+  outline: none;
+  border-color: #00bf63;
 }
 
 /* Pagination Styles */

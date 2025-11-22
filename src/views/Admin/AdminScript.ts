@@ -62,7 +62,7 @@ export function useAdmin() {
     fetchEnvios()
   })
 
-  const handleResolveAlert = async (messageId: number, resolutionMessage: string) => {
+  const handleResolveAlert = async (messageId: number, occurrenceType: string) => {
     try {
       const response = await fetch('http://localhost:8080/api/alerts/resolve', {
         method: 'POST',
@@ -71,7 +71,7 @@ export function useAdmin() {
         },
         body: JSON.stringify({
           messageId,
-          resolutionMessage,
+          occurrenceType,
         }),
       });
 
@@ -79,8 +79,8 @@ export function useAdmin() {
         throw new Error('Failed to resolve alert');
       }
 
-      console.log(`Alert ${messageId} resolved with message: ${resolutionMessage}`);
-      
+      console.log(`Alert ${messageId} resolved with occurrence type: ${occurrenceType}`);
+
       // Refresh the list after successful resolution
       await fetchEnvios();
     } catch (error) {
