@@ -146,8 +146,7 @@ const translateIndicatorName = (name: string): string => {
   </div>
 </template>
 
-<style>
-/* ... (o CSS permanece igual) ... */
+<style scoped>
 .card-container {
   margin-bottom: 10px;
 }

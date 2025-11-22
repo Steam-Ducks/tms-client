@@ -14,7 +14,7 @@ const {
   showRoleForm, roleFormMode, editingRoleId, form,
   handleAddRole, handleEditRole, handleDeleteRole, submitRole,
 
-  zones, envios, SendMessages,
+  zones, envios, SendMessages, handleResolveAlert,
 } = useAdmin()
 
 import { useRouter } from "vue-router";
@@ -44,7 +44,6 @@ const homepage = () => {
   <div class="admin-header">
     <img src="/src/logo.png" class="logo" alt="Logo Tráfegou" @click="homepage"/>
     <p>Painel do Administrador</p>
-    <div @click="SendMessages" class="mesage-button">Disparar Mensagens</div>
   </div>
 
   <div class="card-grid">
@@ -58,7 +57,7 @@ const homepage = () => {
   </div>
 
   <div class="admin-body">
-    <MessageControl :rows="envios" />
+    <MessageControl :rows="envios" @resolve="handleResolveAlert" />
 
     <div class="side-cards">
       <UserComponent />
