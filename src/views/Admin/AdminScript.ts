@@ -1,4 +1,5 @@
 // views/Admin/AdminScript.ts
+import { ref, onMounted } from 'vue'
 import { useDashboard } from '../Dashboard/DashboardScript'
 import { useRoles } from './RoleScript'
 export { default as Card } from '@/components/AdminCardComponent.vue'
@@ -26,40 +27,73 @@ export function useAdmin() {
     console.log('Disparando mensagens…')
   }
 
-  const envios = [
-  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
-  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+  const envios = ref<Array<{
+    id: number;
+    status: boolean;
+    ocorrencia: string;
+    location: string;
+    date: string;
+    destinatario: string;
+  }>>([])
 
-  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
-  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+  const loadingEnvios = ref(false)
+  const enviosError = ref<string | null>(null)
 
-  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
-  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+  const fetchEnvios = async () => {
+    loadingEnvios.value = true
+    enviosError.value = null
+    try {
+      const response = await fetch('http://localhost:8080/api/alerts')
+      if (!response.ok) {
+        throw new Error('Failed to fetch alerts')
+      }
+      const data = await response.json()
+      envios.value = data
+    } catch (error) {
+      console.error('Error fetching alerts:', error)
+      enviosError.value = 'Erro ao carregar alertas'
+    } finally {
+      loadingEnvios.value = false
+    }
+  }
 
-  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
-  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
+  // Fetch on mount
+  onMounted(() => {
+    fetchEnvios()
+  })
 
-  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
-  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+  const handleResolveAlert = async (messageId: number, resolutionMessage: string) => {
+    try {
+      const response = await fetch('http://localhost:8080/api/alerts/resolve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messageId,
+          resolutionMessage,
+        }),
+      });
 
-  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
-  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
+      if (!response.ok) {
+        throw new Error('Failed to resolve alert');
+      }
 
-  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
-  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
-
-  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
-  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
-
-  { destinatario: "+55 12 98877 6655", regiao: "Zona Sul", dataEnvio: "19/09/2025 00:00:13", status: "Resolvido" },
-  { destinatario: "+55 11 92111 2222", regiao: "Zona Norte", dataEnvio: "19/10/2025 01:58:15", status: "Não Resolvido" },
-];
+      console.log(`Alert ${messageId} resolved with message: ${resolutionMessage}`);
+      
+      // Refresh the list after successful resolution
+      await fetchEnvios();
+    } catch (error) {
+      console.error('Error resolving alert:', error);
+      alert('Erro ao resolver o alerta. Tente novamente.');
+    }
+  };
 
 
   return {
     rolesList, loadingRoles, rolesError,
     showRoleForm, roleFormMode, editingRoleId, form,
     handleAddRole, handleEditRole, handleDeleteRole, submitRole,
-    zones, status, envios, SendMessages,
+    zones, status, envios, loadingEnvios, enviosError, fetchEnvios, SendMessages, handleResolveAlert,
   }
 }

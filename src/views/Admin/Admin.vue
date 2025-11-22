@@ -17,9 +17,6 @@ const {
   zones, envios, SendMessages,
 } = useAdmin()
 
-import { useRouter } from "vue-router";
-const router = useRouter();
-
 // Map zone level to status text
 const statusMap: Record<number, string> = {
   1: "excelente",
@@ -32,17 +29,13 @@ const statusMap: Record<number, string> = {
 function getZoneStatus(level: number): string {
   return statusMap[level] || "regular"
 }
-
-const homepage = () => {
-    router.push("/");
-  };
 </script>
 
 <style src="./AdminStyle.css" scoped></style>
 
 <template>
   <div class="admin-header">
-    <img src="/src/logo.png" class="logo" alt="Logo Tráfegou" @click="homepage"/>
+    <img src="/src/logo.png" class="logo" alt="Logo Tráfegou" />
     <p>Painel do Administrador</p>
     <div @click="SendMessages" class="mesage-button">Disparar Mensagens</div>
   </div>
@@ -61,7 +54,14 @@ const homepage = () => {
     <MessageControl :rows="envios" />
 
     <div class="side-cards">
-      <UserComponent />
+      <UserComponent
+        :users="users"
+        :loading="loadingUsers"
+        :error="usersError"
+        @add="handleAdd"
+        @edit="handleEdit"
+        @delete="handleDelete"
+      />
 
       <RolesComponent
         :roles="rolesList"
@@ -90,7 +90,7 @@ const homepage = () => {
 
   <Modal v-if="showRoleForm" @close="showRoleForm = false">
     <div class="title">
-      <h3>{{ roleFormMode === 'create' ? 'Criar cargo' : 'Editar cargo' }}</h3>
+      <h3>{{ roleFormMode === 'create' ? 'Criar role' : 'Editar role' }}</h3>
       <hr/>
     </div>
     <RoleFormComponent :form="form" @submit="submitRole" @cancel="showRoleForm = false" />
