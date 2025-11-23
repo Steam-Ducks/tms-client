@@ -4,6 +4,8 @@ import {
   Card, MessageControl, UserComponent, RolesComponent,
   Modal, UserFormComponent, RoleFormComponent,
 } from './AdminScript'
+import MyTelegramCode from '../../components/MyTelegramCodeComponent.vue'
+import { onMounted } from 'vue'
 
 const {
   users, loadingUsers, usersError,
@@ -14,8 +16,14 @@ const {
   showRoleForm, roleFormMode, editingRoleId, form,
   handleAddRole, handleEditRole, handleDeleteRole, submitRole,
 
-  zones, envios, SendMessages,
+  zones, envios, SendMessages, handleResolveAlert,
 } = useAdmin()
+
+import { useRouter } from "vue-router";
+import { usuarioStore } from "@/stores/usuario";
+
+const router = useRouter();
+const store = usuarioStore();
 
 // Map zone level to status text
 const statusMap: Record<number, string> = {
@@ -29,15 +37,48 @@ const statusMap: Record<number, string> = {
 function getZoneStatus(level: number): string {
   return statusMap[level] || "regular"
 }
+
+const homepage = () => {
+    router.push("/");
+};
+
+const logout = () => {
+    store.logout();
+    router.push("/login");
+  };
+
+// Logs de debug
+onMounted(() => {
+  console.log('🎯 Admin.vue montado');
+  console.log('📊 Dados carregados:');
+  console.log('  - Zones:', zones?.length || 0);
+  console.log('  - Users:', users?.length || 0);
+  console.log('  - Roles:', rolesList?.length || 0);
+  console.log('  - Envios:', envios?.length || 0);
+  console.log('🔗 MyTelegramCode component importado:', !!MyTelegramCode);
+});
+
+// Log quando os dados são atualizados
+console.log('🔄 Admin.vue - dados atualizados:', {
+  zonesCount: zones?.length,
+  usersCount: users?.length,
+  rolesCount: rolesList?.length,
+  enviosCount: envios?.length
+});
 </script>
 
 <style src="./AdminStyle.css" scoped></style>
 
 <template>
   <div class="admin-header">
-    <img src="/src/logo.png" class="logo" alt="Logo Tráfegou" />
+    <img src="/src/logo.png" class="logo" alt="Logo Tráfegou" @click="homepage"/>
     <p>Painel do Administrador</p>
-    <div @click="SendMessages" class="mesage-button">Disparar Mensagens</div>
+
+    <!-- Botões de navegação -->
+    <div class="admin-header-buttons">
+      <button @click="homepage" class="btn">Portal</button>
+      <button @click="logout" class="btn btn-logout">Logout</button>
+    </div>
   </div>
 
   <div class="card-grid">
@@ -51,18 +92,11 @@ function getZoneStatus(level: number): string {
   </div>
 
   <div class="admin-body">
-    <MessageControl :rows="envios" />
+    <MessageControl :rows="envios" @resolve="handleResolveAlert" />
 
     <div class="side-cards">
-      <UserComponent
-        :users="users"
-        :loading="loadingUsers"
-        :error="usersError"
-        @add="handleAdd"
-        @edit="handleEdit"
-        @delete="handleDelete"
-      />
-
+      <MyTelegramCode />
+      <UserComponent />
       <RolesComponent
         :roles="rolesList"
         :loading="loadingRoles"
@@ -74,6 +108,7 @@ function getZoneStatus(level: number): string {
     </div>
   </div>
 
+  <!-- Modals continuam iguais -->
   <Modal v-if="showUserForm" @close="showUserForm = false">
     <div class="title">
       <h3>{{ userFormMode === 'create' ? 'Cadastrar usuário' : 'Editar usuário' }}</h3>
@@ -90,9 +125,35 @@ function getZoneStatus(level: number): string {
 
   <Modal v-if="showRoleForm" @close="showRoleForm = false">
     <div class="title">
-      <h3>{{ roleFormMode === 'create' ? 'Criar role' : 'Editar role' }}</h3>
+      <h3>{{ roleFormMode === 'create' ? 'Criar cargo' : 'Editar cargo' }}</h3>
       <hr/>
     </div>
     <RoleFormComponent :form="form" @submit="submitRole" @cancel="showRoleForm = false" />
   </Modal>
 </template>
+<style scoped>
+
+
+.admin-header-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  
+}
+
+.btn-logout {
+  background-color: #dc3545;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+</style>

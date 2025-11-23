@@ -1,9 +1,19 @@
 import axios from "axios";
 
+export interface Camera {
+  id: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  averageSpeed: number;
+}
+
 export interface ZoneLevel {
   id: string;
   name: string;
   level: number;
+  weatherCode: number;
+  cameras?: Camera[];
 }
 
 const API_URL_ZONES = "http://localhost:8080/levels/zones";

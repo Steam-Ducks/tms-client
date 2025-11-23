@@ -10,15 +10,76 @@ import DoubleBarChart from '@/components/DoubleBarChart.vue'
 import DonutChart from '@/components/DonutChart.vue'
 import LineChart from '@/components/LineChart.vue'
 
+// 1. DEFINIÇÃO DA INTERFACE DOS DADOS DE ALERTA
+export interface TrafficAlert {
+  id: number;
+  region: string;
+  street: string;
+  statusText: string;
+  level: 'ruim' | 'pessimo' | 'regular' | 'bom' | 'excelente';
+  time: string;
+}
+
+
 export function useDashboard() {
   const zones = ref<ZoneLevel[]>([])
+  const selectedRegion = ref<string | null>(null)
   const { status, setLevel } = useLevelStatus()
   let intervalId: number | null = null
+
+  //ESTADO REATIVO PARA OS ALERTAS (Simulação do top dos top 5)
+  const trafficAlerts = ref<TrafficAlert[]>([
+    {
+      id: 1,
+      region: "Região Centro",
+      street: "Av. Principal",
+      statusText: "Tráfego PÉSSIMO devido a incidente.",
+      level: 'pessimo',
+      time: "Atualizado: 17:20"
+    },
+    {
+      id: 2,
+      region: "Região Oeste",
+      street: "Rua das Laranjeiras",
+      statusText: "Trânsito RUIM em 70% da via.",
+      level: 'ruim',
+      time: "Atualizado: 17:15"
+    },
+    {
+      id: 3,
+      region: "Região Sul",
+      street: "Rodovia Z",
+      statusText: "Fluxo regular, aumento de lentidão.",
+      level: 'regular',
+      time: "Atualizado: 17:10"
+    },
+    {
+      id: 4,
+      region: "Região Leste",
+      street: "Av. do Parque",
+      statusText: "Trânsito bom, leve lentidão em um trecho.",
+      level: 'bom',
+      time: "Atualizado: 17:05"
+    },
+    {
+      id: 5,
+      region: "Região Norte",
+      street: "Rua da Serra",
+      statusText: "Tráfego excelente, sem ocorrências.",
+      level: 'excelente',
+      time: "Atualizado: 17:00"
+    },
+  ]);
 
   const fetchZones = async () => {
     try {
       const data = await TrafficService.getZoneLevels()
       zones.value = data
+
+      if (!selectedRegion.value && data.some(zone => zone.id === "1")) {
+        selectedRegion.value = "1"
+      }
+
       console.log("Dados atualizados:", data)
     } catch (err) {
       console.error("Erro ao carregar zonas:", err)
@@ -34,6 +95,10 @@ export function useDashboard() {
       console.error("Erro ao carregar nível da cidade:", err)
       setLevel(3)
     }
+  }
+
+  const fetchAlerts = async () => {
+    console.log("Alertas de tráfego prontos para atualização.");
   }
 
   const updateComplianceRateChart = async () => {
@@ -74,9 +139,9 @@ export function useDashboard() {
       console.log('Gráfico da Taxa de Conformidade atualizado!');
 
       donutChartData.value = averageComplianceRate * 100
+      donutChartData.trend = await getTrend("Compliance Rate")
 
-    }
-    catch (err) {
+    } catch (err) {
       console.error("Erro ao atualizar gráfico de Compliance Rate:", err);
     }
   }
@@ -99,10 +164,10 @@ export function useDashboard() {
       });
 
       hourlySpeedData.datasets[0].data = hourlyAverages
+      hourlySpeedData.trend = await getTrend("Average Speed");
 
       console.log("Gráfico de velocidade média por hora atualizado!")
-    }
-    catch (err) {
+    } catch (err) {
       console.error("Erro ao atualizar gráfico de média por hora:", err);
     }
   }
@@ -161,6 +226,7 @@ export function useDashboard() {
 
       weeklySpeedData.datasets[0].data = weekData(week1Data);
       weeklySpeedData.datasets[1].data = weekData(week2Data);
+      weeklySpeedData.trend = await getTrend("Average Speed");
 
       console.log("Gráfico de Velocidade Média Semanal atualizado!")
 
@@ -169,19 +235,34 @@ export function useDashboard() {
     }
   }
 
+  const getTrend = async (indicatorName: string) => {
+    try {
+      const indicatorStatus = await IndicatorService.getIndicatorsStatus();
+      const valor = indicatorStatus[indicatorName];
+      console.log(`Tendência para ${indicatorName}: ${valor}`)
+      return valor || "MANTEVE";
+    } catch (err) {
+      console.error("Erro ao buscar tendência:", err);
+      return "MANTEVE";
+    }
+  }
+
   const weeklySpeedData = reactive({
-    labels: ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'],
-    datasets: [
-      { label: 'Semana Anterior', backgroundColor: '#D91532', data: [] },
-      { label: 'Semana Atual', backgroundColor: '#00BF63', data: [] },
-    ],
+    labels: ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'],
+    datasets: [
+      { label: 'Semana Anterior', backgroundColor: '#D91532', data: [] },
+      { label: 'Semana Atual', backgroundColor: '#00BF63', data: [] },
+    ],
+    trend: "MANTEVE",
   });
+
 
   const donutChartData = reactive({
     regionName: "Geral",
     value: 0,
     limit: 100,
     difference: 0,
+    trend: "MANTEVE",
   });
 
   const hourlySpeedData = reactive({
@@ -195,6 +276,7 @@ export function useDashboard() {
         data: [] as number[],
       },
     ],
+    trend: "MANTEVE",
   });
 
   onMounted(async () => {
@@ -204,38 +286,42 @@ export function useDashboard() {
     await updateHourlySpeedChart()
     await updateComplianceRateChart()
 
-    intervalId = setInterval(async () => {
-      await fetchZones()
-      await updateCityLevel()
+    intervalId = setInterval(async () => {
+      await fetchZones()
+      await updateCityLevel()
       await updateWeeklySpeedChart()
       await updateHourlySpeedChart()
       await updateComplianceRateChart()
-    }, 30000)
-  })
+      await fetchAlerts() // CHAME A FUNÇÃO NO INTERVALO
+    }, 30000)
+  })
 
-  onUnmounted(() => {
-    if (intervalId) {
-      clearInterval(intervalId)
-    }
-  })
+  onUnmounted(() => {
+    if (intervalId) {
+      clearInterval(intervalId)
+    }
+  })
 
   const handleRegionClick = (regionId: string) => {
     console.log('Region clicked:', regionId)
+    selectedRegion.value = regionId
   }
 
   return {
     zones,
+    selectedRegion,
     status,
     handleRegionClick,
     // Components
-    MapComponent,
-    CaptionComponent,
-    Card,
-    DoubleBarChart,
-    weeklySpeedData,
-    DonutChart,
-    donutChartData,
-    LineChart,
-    hourlySpeedData,
-  }
+    MapComponent,
+    CaptionComponent,
+    Card,
+    DoubleBarChart,
+    weeklySpeedData,
+    DonutChart,
+    donutChartData,
+    LineChart,
+    hourlySpeedData,
+    trafficAlerts,
+  }
 }

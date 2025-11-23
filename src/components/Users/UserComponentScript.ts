@@ -45,9 +45,16 @@ export function useUsers() {
     Object.keys(initialUser).forEach(key => {
       delete initialUser[key]
     })
-    Object.assign(initialUser, { username: '', email: '', phoneNumber: '', password: '', roleId: undefined })
+    Object.assign(initialUser, {
+      username: '',
+      email: '',
+      phoneNumber: '',
+      password: '',
+      roleId: undefined,
+    })
     showUserForm.value = true
   }
+
   function handleEdit(user: { id: string | number; name: string; role?: string }) {
     userFormMode.value = 'edit'
     editingUserId.value = user.id
@@ -97,7 +104,10 @@ export function useUsers() {
   async function onUserFormSuccess(saved: any) {
     const hasId = saved && (saved.id ?? saved.id === 0)
     const hasName = !!(saved?.username || saved?.name)
-    const hasRole = !!(saved?.roleDescription || (Array.isArray(saved?.roles) && saved.roles.length))
+    const hasRole = !!(
+      saved?.roleDescription ||
+      (Array.isArray(saved?.roles) && saved.roles.length)
+    )
 
     if (!hasId || !hasName || !hasRole) {
       await loadUsers()
@@ -117,19 +127,49 @@ export function useUsers() {
     const card = mapToCard(saved)
     if (userFormMode.value === 'create') {
       users.value = [card, ...users.value]
-      await Swal.fire({ icon:'success', title:'Usuário cadastrado!', timer:1600, showConfirmButton:false, background:'#1e1e1e', color:'#fff' })
+      await Swal.fire({
+        icon: 'success',
+        title: 'Usuário cadastrado!',
+        timer: 1600,
+        showConfirmButton: false,
+        background: '#1e1e1e',
+        color: '#fff',
+      })
     } else {
       users.value = users.value.map(u => (u.id === card.id ? card : u))
-      await Swal.fire({ icon:'success', title:'Alterações salvas!', timer:1600, showConfirmButton:false, background:'#1e1e1e', color:'#fff' })
+      await Swal.fire({
+        icon: 'success',
+        title: 'Alterações salvas!',
+        timer: 1600,
+        showConfirmButton: false,
+        background: '#1e1e1e',
+        color: '#fff',
+      })
     }
+    showUserForm.value = false
+  }
+
+  function closeUserForm() {
     showUserForm.value = false
   }
 
   onMounted(loadUsers)
 
   return {
-    users, loadingUsers, usersError, rawUsers,
-    showUserForm, userFormMode, editingUserId, initialUser,
-    handleAdd, handleEdit, handleDelete, onUserFormSuccess,
+    users,
+    loadingUsers,
+    usersError,
+    rawUsers,
+
+    showUserForm,
+    userFormMode,
+    editingUserId,
+    initialUser,
+
+    handleAdd,
+    handleEdit,
+    handleDelete,
+    onUserFormSuccess,
+    closeUserForm,
   }
 }
