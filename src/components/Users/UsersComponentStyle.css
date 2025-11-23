@@ -1,4 +1,4 @@
-  .user-control {
+.user-control {
     width: 100%;
     height: 344px;
     border-radius: 16px;
@@ -68,7 +68,8 @@
   .icon{ width: 18px; height: 18px; }
 
   .edit-button,
-  .delete-button{
+  .delete-button,
+  .telegram-button{
     width: 38px;
     height: 38px;
     padding: 6px 10px;
@@ -86,6 +87,9 @@
 
   .delete-button{ background-color: #D915324D; }
   .delete-button:hover{ background-color: #d9153270; }
+
+  .telegram-button{ background-color: #0088CC4D; }
+  .telegram-button:hover{ background-color: #0088CC66; }
 
   .empty{
     text-align: center;
